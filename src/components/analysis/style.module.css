@@ -1,0 +1,260 @@
+/* Analysis tab styles */
+.container {
+  margin-top: 2rem;
+}
+
+.mainGrid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .mainGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.iconWrapper {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+}
+
+.blueIcon {
+  background-color: #dbeafe;
+}
+
+.greenIcon {
+  background-color: #d1fae5;
+}
+
+.pinkIcon {
+  background-color: #fce7f3;
+}
+
+.imagePreviewContainer {
+  position: relative;
+  background: linear-gradient(to bottom right, #f1f5f9, #cbd5e1);
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.imagePreview {
+  width: 100%;
+  height: auto;
+  max-height: 20rem;
+  object-fit: contain;
+}
+
+.imageMetadata {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.metadataGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  font-size: 0.875rem;
+}
+
+.metadataBox {
+  padding: 0.75rem;
+  background-color: #f8fafc;
+  border-radius: 0.5rem;
+}
+
+.metadataLabel {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.metadataValue {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.metadataValueLarge {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.aspectRatioSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.aspectRatioHighlight {
+  padding: 1rem;
+  background: linear-gradient(to right, #f0fdf4, #d1fae5);
+  border-radius: 0.75rem;
+}
+
+.aspectRatioContent {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.aspectRatioValue {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #065f46;
+}
+
+.aspectRatioDecimal {
+  font-size: 0.875rem;
+  color: #059669;
+  margin-top: 0.25rem;
+}
+
+.commonFormatBox {
+  padding: 1rem;
+  background-color: #eff6ff;
+  border-radius: 0.75rem;
+}
+
+.orientationBox {
+  padding: 1rem;
+  background-color: #faf5ff;
+  border-radius: 0.75rem;
+}
+
+.orientationTags {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.colorAnalysisSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.colorAnalysisGrid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .colorAnalysisGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.dominantColorsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.colorList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.colorItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  background-color: #f8fafc;
+  border-radius: 0.75rem;
+  transition: background-color 150ms;
+}
+
+.colorItem:hover {
+  background-color: #f1f5f9;
+}
+
+.colorSwatch {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.75rem;
+  border: 2px solid white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.colorInfo {
+  flex: 1;
+}
+
+.colorHex {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.colorPercentage {
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.propertiesSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.brightnessBox {
+  padding: 1rem;
+  background: linear-gradient(to right, #fffbeb, #fed7aa);
+  border-radius: 0.75rem;
+}
+
+.brightnessProgress {
+  margin-top: 0.75rem;
+}
+
+.brightnessInfo {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  color: #d97706;
+  margin-top: 0.5rem;
+}
+
+.imagePropertiesBox {
+  padding: 1rem;
+  background: linear-gradient(to right, #f8fafc, #e2e8f0);
+  border-radius: 0.75rem;
+}
+
+.propertyList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.propertyItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.propertyLabel {
+  font-size: 0.875rem;
+  color: #475569;
+}
+
+.propertyValue {
+  font-weight: 600;
+  color: #334155;
+}

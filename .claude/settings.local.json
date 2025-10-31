@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs:*)",
+      "Bash(comm -23:*)",
+      "Bash(wc:*)",
+      "Bash(for f in calendar carousel chart command context-menu drawer dropdown-menu field form input-group menubar navigation-menu sheet sidebar)",
+      "Bash(sort:*)",
+      "Bash(chmod:*)",
+      "Bash(for file in drawer sheet navigation-menu form input-group command calendar carousel field context-menu dropdown-menu menubar chart sidebar)",
+      "Bash(do python3 /tmp/convert_tsx_to_jsx.py \"vercel-code/components/ui/$file.tsx\" \"src/components/ui/$file.jsx\")",
+      "Bash(ls:*)",
+      "Bash(for comp in button card input label select slider tabs badge progress separator switch toast toaster popover)",
+      "Bash(do if [ -f \"/Users/karthik/work-space/projects/Noveau-space/Dev-space/pic-studio/src/components/ui/$comp.jsx\" ])",
+      "Bash(then echo \"✓ $comp.jsx\")",
+      "Bash(else echo \"✗ $comp.jsx (MISSING)\")",
+      "Bash(cat:*)",
+      "Bash(node -c:*)",
+      "Bash(npm run build:*)",
+      "Bash(node:*)",
+      "Bash(/Users/karthik/work-space/projects/Noveau-space/Dev-space/pic-studio/src/components/AspectRatioCalculator.jsx)",
+      "Bash(npm run dev:*)",
+      "Bash(mkdir:*)",
+      "Bash(tree:*)",
+      "Bash(for file in /Users/karthik/work-space/projects/Noveau-space/Dev-space/pic-studio/src/components/aspect-ratio-calculator/tabs/*/index.jsx)",
+      "Bash(done)",
+      "Bash(npm install:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

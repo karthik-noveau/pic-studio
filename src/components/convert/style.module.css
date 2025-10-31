@@ -1,0 +1,201 @@
+/* Convert tab specific styles */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.card {
+  border: 0;
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
+}
+
+.titleContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.titleContent {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.iconWrapper {
+  padding: 0.5rem;
+  background-color: #e0e7ff;
+  border-radius: 0.5rem;
+}
+
+.revertButton {
+  color: #ea580c;
+  border-color: #fed7aa;
+  background-color: transparent;
+}
+
+.revertButton:hover {
+  background-color: #fff7ed;
+}
+
+.extraText {
+  font-size: 0.875rem;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formatSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.formatLabel {
+  font-size: 1rem;
+  font-weight: 500;
+  display: block;
+}
+
+.qualitySection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.qualityLabel {
+  font-size: 1rem;
+  font-weight: 500;
+  display: block;
+}
+
+.statsContainer {
+  padding: 1rem;
+  background-color: #eef2ff;
+  border-radius: 0.75rem;
+}
+
+.statsContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.statRow {
+  display: flex;
+  justify-content: space-between;
+}
+
+.statLabel {
+  color: #3730a3;
+}
+
+.statValue {
+  font-weight: bold;
+  color: #312e81;
+}
+
+.downloadButton {
+  width: 100%;
+  height: 3rem;
+  background-color: #4f46e5;
+}
+
+.downloadButton:hover {
+  background-color: #4338ca;
+}
+
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.formatInfoSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.formatInfoTitle {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.formatCard {
+  padding: 1rem;
+  border-radius: 0.75rem;
+  border: 2px solid;
+  transition: all 200ms;
+}
+
+.formatCardDefault {
+  background-color: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.formatCardDefault:hover {
+  background-color: #f1f5f9;
+}
+
+.formatCardSelected {
+  background-color: #eef2ff;
+  border-color: #c7d2fe;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.formatCardTitle {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.formatCardDescription {
+  font-size: 0.875rem;
+  color: #475569;
+  margin-top: 0.25rem;
+}
+
+.formatCardBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.formatCardBadgeGreen {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.formatCardBadgeRed {
+  background-color: #fee2e2;
+  color: #991b1b;
+}

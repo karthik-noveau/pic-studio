@@ -1,0 +1,114 @@
+/* Common handle styles */
+.handleCorner,
+.handleEdge {
+  position: absolute;
+  background-color: rgb(59 130 246);
+  border: 1px solid white;
+  transition: background-color 150ms;
+}
+
+.handleCorner:hover,
+.handleEdge:hover {
+  background-color: rgb(37 99 235);
+}
+
+/* Corner handles */
+.handleCorner {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+.handleNw {
+  top: -0.25rem;
+  left: -0.25rem;
+  cursor: nw-resize;
+}
+
+.handleNe {
+  top: -0.25rem;
+  right: -0.25rem;
+  cursor: ne-resize;
+}
+
+.handleSw {
+  bottom: -0.25rem;
+  left: -0.25rem;
+  cursor: sw-resize;
+}
+
+.handleSe {
+  bottom: -0.25rem;
+  right: -0.25rem;
+  cursor: se-resize;
+}
+
+/* Edge handles */
+.handleN {
+  top: -0.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0.75rem;
+  height: 0.5rem;
+  cursor: n-resize;
+}
+
+.handleS {
+  bottom: -0.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0.75rem;
+  height: 0.5rem;
+  cursor: s-resize;
+}
+
+.handleW {
+  left: -0.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0.5rem;
+  height: 0.75rem;
+  cursor: w-resize;
+}
+
+.handleE {
+  right: -0.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0.5rem;
+  height: 0.75rem;
+  cursor: e-resize;
+}
+
+/* Move indicator */
+.moveIndicator {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  color: white;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  background-color: rgb(59 130 246);
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  border-radius: 0.25rem;
+  pointer-events: none;
+}
+
+.moveIcon {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+/* Grid container */
+.gridContainer {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  pointer-events: none;
+}
+
+.gridCell {
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}

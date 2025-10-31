@@ -1,0 +1,228 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: #f8f9fa;
+  min-height: 100vh;
+  color: #1f2937;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Ant Design customizations - MINIMAL & PROFESSIONAL */
+.ant-card {
+  border-radius: 8px !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+.ant-card-head {
+  background: #ffffff !important;
+  border-bottom: 1px solid #e5e7eb !important;
+  font-weight: 600 !important;
+  font-size: 15px !important;
+  color: #1f2937 !important;
+}
+
+.ant-tabs-tab {
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  color: #6b7280 !important;
+}
+
+.ant-tabs-tab:hover {
+  color: #6366f1 !important;
+}
+
+.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #6366f1 !important;
+  font-weight: 600 !important;
+}
+
+.ant-tabs-ink-bar {
+  background: #6366f1 !important;
+  height: 2px !important;
+}
+
+.ant-btn-primary {
+  background: #6366f1 !important;
+  border: none !important;
+  font-weight: 500 !important;
+  color: #ffffff !important;
+}
+
+.ant-btn-primary:hover {
+  background: #4f46e5 !important;
+}
+
+.ant-btn-default {
+  font-weight: 500 !important;
+  border: 1px solid #d1d5db !important;
+  color: #374151 !important;
+  background: #ffffff !important;
+}
+
+.ant-btn-default:hover {
+  border-color: #6366f1 !important;
+  color: #6366f1 !important;
+}
+
+.ant-input,
+.ant-input-number,
+.ant-select-selector {
+  border-radius: 6px !important;
+  border: 1px solid #d1d5db !important;
+  color: #1f2937 !important;
+  font-weight: 400 !important;
+}
+
+.ant-input::placeholder {
+  color: #9ca3af !important;
+}
+
+.ant-input:focus,
+.ant-input-number:focus,
+.ant-select-focused .ant-select-selector {
+  border-color: #6366f1 !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+}
+
+.ant-slider-rail {
+  background: #e5e7eb !important;
+  height: 4px !important;
+}
+
+.ant-slider-track {
+  background: #6366f1 !important;
+  height: 4px !important;
+}
+
+.ant-slider-handle {
+  border: 2px solid #6366f1 !important;
+  background: #ffffff !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+  width: 14px !important;
+  height: 14px !important;
+}
+
+.ant-switch {
+  background: #d1d5db !important;
+}
+
+.ant-switch-checked {
+  background: #6366f1 !important;
+}
+
+.ant-tag {
+  border-radius: 4px !important;
+  font-weight: 500 !important;
+  padding: 2px 8px !important;
+  font-size: 13px !important;
+  border: none !important;
+  color: #ffffff !important;
+}
+
+.ant-progress-bg {
+  background: #6366f1 !important;
+}
+
+.ant-progress-inner {
+  background: #e5e7eb !important;
+}
+
+/* Tag colors - clean and readable */
+.ant-tag-success {
+  background: #10b981 !important;
+  color: #ffffff !important;
+}
+
+.ant-tag-warning {
+  background: #f59e0b !important;
+  color: #ffffff !important;
+}
+
+.ant-tag-error {
+  background: #ef4444 !important;
+  color: #ffffff !important;
+}
+
+.ant-tag-processing {
+  background: #3b82f6 !important;
+  color: #ffffff !important;
+}
+
+/* Typography */
+.ant-typography {
+  color: #1f2937 !important;
+}
+
+.ant-typography-secondary {
+  color: #6b7280 !important;
+}
+
+/* Select dropdown */
+.ant-select-dropdown {
+  border-radius: 6px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+.ant-select-item-option-selected {
+  background-color: #f3f4f6 !important;
+  color: #6366f1 !important;
+  font-weight: 500 !important;
+}
+
+/* Divider */
+.ant-divider {
+  border-color: #e5e7eb !important;
+}
+
+/* Message/Notification */
+.ant-message-notice-content {
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  padding: 12px 16px !important;
+}
+
+.ant-message-success .anticon {
+  color: #10b981 !important;
+}
+
+.ant-message-error .anticon {
+  color: #ef4444 !important;
+}
+
+.ant-message-warning .anticon {
+  color: #f59e0b !important;
+}
+
+.ant-message-info .anticon {
+  color: #3b82f6 !important;
+}
