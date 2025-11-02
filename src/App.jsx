@@ -75,29 +75,65 @@ function App() {
   // Computed processed image with all cumulative transformations
   const [processedImageSrc, setProcessedImageSrc] = useState(null);
 
+  // Compressed image preview for comparison slider
+  const [compressedImageSrc, setCompressedImageSrc] = useState(null);
+  const [compressedSize, setCompressedSize] = useState(null);
+  const [compressionRatio, setCompressionRatio] = useState(null);
+
   const canvasRef = useRef(null);
   const cropCanvasRef = useRef(null);
   const previewCanvasRef = useRef(null);
   const cropContainerRef = useRef(null);
+  const isLoadingSettings = useRef(false);
 
   const imageData = images[activeImageIndex] || null;
 
   // Effect to load settings when active image changes
   useEffect(() => {
-    if (imageData && imageData.settings) {
-      setCropArea(imageData.settings.cropArea);
-      setRotation(imageData.settings.rotation);
-      setCornerRadius(imageData.settings.cornerRadius);
-      setBackgroundColor(imageData.settings.backgroundColor);
-      setRemoveBackground(imageData.settings.removeBackground);
-      setCompressionQuality(imageData.settings.compressionQuality);
-      setSelectedFormat(imageData.settings.selectedFormat);
-      setConversionQuality(imageData.settings.conversionQuality);
+    const currentImage = images[activeImageIndex];
+    if (currentImage && currentImage.settings) {
+      isLoadingSettings.current = true;
+      setCropArea(currentImage.settings.cropArea);
+      setRotation(currentImage.settings.rotation);
+      setCornerRadius(currentImage.settings.cornerRadius);
+      setBackgroundColor(currentImage.settings.backgroundColor);
+      setRemoveBackground(currentImage.settings.removeBackground);
+      setCompressionQuality(currentImage.settings.compressionQuality);
+      setSelectedFormat(currentImage.settings.selectedFormat);
+      setConversionQuality(currentImage.settings.conversionQuality);
+      // Reset flag after state updates have been processed
+      setTimeout(() => {
+        isLoadingSettings.current = false;
+      }, 0);
     }
-  }, [activeImageIndex, imageData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeImageIndex]);
+
+  // Redraw canvas when active image changes
+  useEffect(() => {
+    if (!imageData || !canvasRef.current) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const img = new Image();
+    img.onload = () => {
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
+    };
+    img.src = imageData.src;
+  }, [imageData, activeImageIndex]);
 
   // Effect to save settings back to the active image whenever they change
   useEffect(() => {
+    // Don't save settings while we're loading them
+    if (isLoadingSettings.current) {
+      return;
+    }
+
     if (imageData) {
       setImages((prev) =>
         prev.map((img, idx) => {
@@ -336,6 +372,59 @@ function App() {
       setProcessedImageSrc(imageData.src);
     }
   }, [imageData, masterSettings, cropArea, rotation, backgroundColor, removeBackground, cornerRadius]);
+
+  // Generate compressed image preview for comparison slider
+  useEffect(() => {
+    if (!processedImageSrc || !imageData) {
+      setCompressedImageSrc(null);
+      setCompressedSize(null);
+      setCompressionRatio(null);
+      return;
+    }
+
+    try {
+      // Create a temporary canvas to load the processed image
+      const tempCanvas = document.createElement('canvas');
+      const tempCtx = tempCanvas.getContext('2d');
+      if (!tempCtx) return;
+
+      const img = new Image();
+      img.onload = () => {
+        tempCanvas.width = img.width;
+        tempCanvas.height = img.height;
+        tempCtx.drawImage(img, 0, 0);
+
+        // Generate compressed preview with the specified quality
+        const quality = compressionQuality / 100;
+        const compressedDataUrl = tempCanvas.toDataURL('image/jpeg', quality);
+
+        // Calculate the compressed file size from data URL
+        // Data URL format: data:image/jpeg;base64,<base64data>
+        const base64String = compressedDataUrl.split(',')[1];
+        const compressedBytes = Math.round((base64String.length * 3) / 4);
+
+        // Calculate compression ratio
+        const originalSize = imageData.fileSize;
+        const ratio = ((originalSize - compressedBytes) / originalSize) * 100;
+
+        setCompressedImageSrc(compressedDataUrl);
+        setCompressedSize(compressedBytes);
+        setCompressionRatio(ratio);
+      };
+      img.onerror = () => {
+        console.error("Error loading processed image for compression");
+        setCompressedImageSrc(processedImageSrc);
+        setCompressedSize(null);
+        setCompressionRatio(null);
+      };
+      img.src = processedImageSrc;
+    } catch (error) {
+      console.error("Error generating compressed preview:", error);
+      setCompressedImageSrc(processedImageSrc);
+      setCompressedSize(null);
+      setCompressionRatio(null);
+    }
+  }, [processedImageSrc, compressionQuality, imageData]);
 
   const analyzeImageData = useCallback((img, file) => {
     const canvas = canvasRef.current;
@@ -927,6 +1016,9 @@ function App() {
             copyToClipboard={copyToClipboard}
             copied={copied}
             processedImageSrc={processedImageSrc}
+            compressedImageSrc={compressedImageSrc}
+            compressedSize={compressedSize}
+            compressionRatio={compressionRatio}
           />
         )}
       </AntdApp>

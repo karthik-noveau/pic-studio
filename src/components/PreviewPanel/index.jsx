@@ -23,6 +23,7 @@ import styles from "./style.module.css";
 export default function PreviewPanel({
   imageData,
   processedImageSrc,
+  compressedImageSrc,
   images,
   activeImageIndex,
   onImageChange,
@@ -91,19 +92,10 @@ export default function PreviewPanel({
     setIsPanning(false);
   }, []);
 
-  const goToPrevious = useCallback(() => {
-    if (activeImageIndex > 0) {
-      onImageChange(activeImageIndex - 1);
-      handleResetView();
-    }
-  }, [activeImageIndex, onImageChange, handleResetView]);
-
-  const goToNext = useCallback(() => {
-    if (activeImageIndex < images.length - 1) {
-      onImageChange(activeImageIndex + 1);
-      handleResetView();
-    }
-  }, [activeImageIndex, images.length, onImageChange, handleResetView]);
+  const handleImageSwitch = useCallback((index) => {
+    onImageChange(index);
+    handleResetView();
+  }, [onImageChange, handleResetView]);
 
   if (!imageData) {
     return (
@@ -140,28 +132,35 @@ export default function PreviewPanel({
         </div>
       </div>
 
-      {/* Image Navigation */}
+      {/* Image Navigation - Thumbnail List */}
       {images.length > 1 && (
-        <div className={styles.imageNavigation}>
-          <Button
-            icon={<ChevronLeft />}
-            onClick={goToPrevious}
-            disabled={activeImageIndex === 0}
-            size="small"
-          >
-            Previous
-          </Button>
-          <span className={styles.imageCounter}>
+        <div className={styles.thumbnailNavigation}>
+          <div className={styles.thumbnailList}>
+            {images.map((image, index) => (
+              <div
+                key={image.id || index}
+                className={`${styles.thumbnailItem} ${
+                  index === activeImageIndex ? styles.thumbnailActive : ""
+                }`}
+                onClick={() => handleImageSwitch(index)}
+              >
+                <img
+                  src={image.src}
+                  alt={image.fileName || `Image ${index + 1}`}
+                  className={styles.thumbnailImage}
+                />
+                <div className={styles.thumbnailOverlay}>
+                  <span className={styles.thumbnailNumber}>{index + 1}</span>
+                </div>
+                {index === activeImageIndex && (
+                  <div className={styles.thumbnailActiveIndicator} />
+                )}
+              </div>
+            ))}
+          </div>
+          <div className={styles.imageCounter}>
             {activeImageIndex + 1} / {images.length}
-          </span>
-          <Button
-            icon={<ChevronRight />}
-            onClick={goToNext}
-            disabled={activeImageIndex === images.length - 1}
-            size="small"
-          >
-            Next
-          </Button>
+          </div>
         </div>
       )}
 
@@ -254,13 +253,21 @@ export default function PreviewPanel({
             </div>
           </div>
           <div className={styles.comparisonSlider}>
-            <ComparisonSlider
-              originalSrc={imageData.src}
-              compressedSrc={processedImageSrc || imageData.src}
-              originalSize={imageData.fileSize}
-              compressedSize={compressedSize || imageData.fileSize}
-              formatFileSize={formatFileSize}
-            />
+            {compressedImageSrc && compressedSize ? (
+              <ComparisonSlider
+                originalSrc={processedImageSrc || imageData.src}
+                compressedSrc={compressedImageSrc}
+                originalSize={imageData.fileSize}
+                compressedSize={compressedSize}
+                formatFileSize={formatFileSize}
+              />
+            ) : (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                <div style={{ textAlign: 'center', color: '#718096' }}>
+                  <p>Generating compressed preview...</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -434,6 +441,11 @@ function ComparisonSlider({ originalSrc, compressedSrc, originalSize, compressed
     setSliderPosition(Math.min(Math.max(percentage, 0), 100));
   };
 
+  // Debug: Check if images are actually different
+  console.log('ComparisonSlider - Original:', originalSrc?.substring(0, 50));
+  console.log('ComparisonSlider - Compressed:', compressedSrc?.substring(0, 50));
+  console.log('Are they the same?', originalSrc === compressedSrc);
+
   return (
     <div
       className={styles.comparisonContainer}
@@ -441,20 +453,20 @@ function ComparisonSlider({ originalSrc, compressedSrc, originalSize, compressed
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
     >
-      {/* Original Image (Left) */}
+      {/* Original Image (Left) - Full width */}
       <div className={styles.comparisonImageWrapper}>
         <img
           src={originalSrc}
           alt="Original"
           className={styles.comparisonImage}
         />
-        <div className={styles.comparisonLabel} style={{ left: '10px' }}>
+        <div className={styles.comparisonLabel} style={{ left: '10px', backgroundColor: 'rgba(59, 130, 246, 0.9)' }}>
           <span className={styles.labelText}>Original</span>
           <span className={styles.labelSize}>{formatFileSize(originalSize)}</span>
         </div>
       </div>
 
-      {/* Compressed Image (Right) with Clip */}
+      {/* Compressed Image (Right) - Clipped from left */}
       <div
         className={styles.comparisonImageWrapper}
         style={{
@@ -466,7 +478,7 @@ function ComparisonSlider({ originalSrc, compressedSrc, originalSize, compressed
           alt="Compressed"
           className={styles.comparisonImage}
         />
-        <div className={styles.comparisonLabel} style={{ right: '10px' }}>
+        <div className={styles.comparisonLabel} style={{ right: '10px', backgroundColor: 'rgba(16, 185, 129, 0.9)' }}>
           <span className={styles.labelText}>Compressed</span>
           <span className={styles.labelSize}>{formatFileSize(compressedSize)}</span>
         </div>

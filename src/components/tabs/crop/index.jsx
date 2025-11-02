@@ -40,6 +40,11 @@ export default function CropTab({
   // Center grid toggle state
   const [showCenterGrid, setShowCenterGrid] = useState(false);
 
+  // Reset center grid when image changes
+  useEffect(() => {
+    setShowCenterGrid(false);
+  }, [imageData.width, imageData.height]);
+
   // When center crop is toggled, move existing crop to center position
   useEffect(() => {
     if (showCenterGrid) {
@@ -55,7 +60,7 @@ export default function CropTab({
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showCenterGrid, imageData.width, imageData.height]);
+  }, [showCenterGrid]);
 
   // Update scale value when crop area changes (from dragging/resizing)
   useEffect(() => {

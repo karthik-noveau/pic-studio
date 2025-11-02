@@ -110,22 +110,39 @@ export default function Home({ onNavigateToStudio, images, setImages, processIma
 
     const loadWithFetch = async (url) => {
       const corsProxies = [
+        (u) => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
         (u) => `https://corsproxy.io/?${encodeURIComponent(u)}`,
-        (u) => `https://cors-anywhere.herokuapp.com/${u}`,
         (u) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
+        // Fallback: try direct with crossorigin
+        (u) => u,
       ];
 
-      for (const proxyFn of corsProxies) {
+      for (let i = 0; i < corsProxies.length; i++) {
+        const proxyFn = corsProxies[i];
         try {
           const proxyUrl = proxyFn(url);
+          console.log(`Trying proxy ${i + 1}/${corsProxies.length}:`, proxyUrl.substring(0, 50) + '...');
+
           const response = await fetch(proxyUrl, {
             method: "GET",
             headers: { Accept: "image/*" },
+            mode: i === corsProxies.length - 1 ? 'cors' : 'cors',
           });
 
-          if (!response.ok) continue;
+          if (!response.ok) {
+            console.log(`Proxy ${i + 1} failed with status:`, response.status);
+            continue;
+          }
 
           const blob = await response.blob();
+
+          // Verify it's actually an image
+          if (!blob.type.startsWith('image/')) {
+            console.log(`Proxy ${i + 1} returned non-image type:`, blob.type);
+            continue;
+          }
+
+          console.log(`Proxy ${i + 1} succeeded!`);
 
           return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -136,14 +153,14 @@ export default function Home({ onNavigateToStudio, images, setImages, processIma
                 const estimatedSize = blob.size;
                 resolve({ img, dataUrl, estimatedSize });
               };
-              img.onerror = reject;
+              img.onerror = () => reject(new Error('Failed to load image from blob'));
               img.src = dataUrl;
             };
-            reader.onerror = reject;
+            reader.onerror = () => reject(new Error('Failed to read blob as data URL'));
             reader.readAsDataURL(blob);
           });
         } catch (e) {
-          console.log(`Fetch proxy failed:`, e.message);
+          console.log(`Proxy ${i + 1} failed:`, e.message);
         }
       }
 
@@ -155,7 +172,7 @@ export default function Home({ onNavigateToStudio, images, setImages, processIma
         const img = new Image();
         const timeout = setTimeout(() => {
           reject(new Error("TIMEOUT"));
-        }, 10000);
+        }, 15000);
 
         img.onload = () => {
           clearTimeout(timeout);
@@ -167,17 +184,22 @@ export default function Home({ onNavigateToStudio, images, setImages, processIma
             ctx.drawImage(img, 0, 0);
             const dataUrl = canvas.toDataURL("image/png");
             const estimatedSize = Math.round((dataUrl.length * 3) / 4);
+            console.log('Direct load succeeded!');
             resolve({ img, dataUrl, estimatedSize, method: "direct" });
           } catch (canvasError) {
+            console.log('Direct load failed due to CORS:', canvasError.message);
             reject(new Error("CORS_BLOCKED"));
           }
         };
 
         img.onerror = () => {
           clearTimeout(timeout);
+          console.log('Direct load failed - image error');
           reject(new Error("LOAD_FAILED"));
         };
 
+        // Add crossorigin attribute to try to avoid CORS issues
+        img.crossOrigin = "anonymous";
         img.src = imageUrl;
       });
     };
@@ -186,18 +208,27 @@ export default function Home({ onNavigateToStudio, images, setImages, processIma
       let result;
       let method = "direct";
 
+      console.log('Starting URL load for:', imageUrl);
+
       try {
+        console.log('Attempting direct load...');
         result = await tryDirectLoad();
         method = result.method;
       } catch (error) {
-        if (error.message === "CORS_BLOCKED" || error.message === "LOAD_FAILED") {
-          message.info("Loading image via proxy server...", 3);
+        console.log('Direct load error:', error.message);
+        if (error.message === "CORS_BLOCKED" || error.message === "LOAD_FAILED" || error.message === "TIMEOUT") {
+          message.info("Direct load failed, trying proxy servers...", 2);
           try {
             result = await loadWithFetch(imageUrl);
             method = "proxy";
           } catch (proxyError) {
+            console.error('All loading methods failed:', proxyError);
             throw new Error(
-              'Unable to load image. Please try: 1) Right-click and "Save image as" then upload the file, or 2) Use a different image URL.'
+              'Unable to load image from URL. This could be because:\n' +
+              '1. The image URL is not accessible\n' +
+              '2. The server blocks external access (CORS)\n' +
+              '3. The URL is not a direct image link\n\n' +
+              'Try: Right-click the image and "Save image as", then upload the file directly.'
             );
           }
         } else {
@@ -218,18 +249,16 @@ export default function Home({ onNavigateToStudio, images, setImages, processIma
       setImages((prev) => [...prev, newImage]);
       setIsLoading(false);
       if (method === "proxy") {
-        message.success("Image loaded via CORS proxy successfully!");
+        message.success("Image loaded via proxy server successfully!");
       } else {
-        message.success("Image loaded from URL successfully");
+        message.success("Image loaded directly from URL successfully!");
       }
       setImageUrl("");
     } catch (error) {
       console.error("URL loading error:", error);
       setIsLoading(false);
-      message.error(
-        error.message ||
-          "Failed to load image from URL. Please check if the URL is correct and the image is accessible."
-      );
+      const errorMsg = error.message || "Failed to load image from URL. Please check if the URL is correct and accessible.";
+      message.error(errorMsg, 5);
     }
   }, [imageUrl, processImage, setImages]);
 

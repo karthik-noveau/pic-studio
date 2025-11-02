@@ -62,6 +62,9 @@ export default function Studio({
   copyToClipboard,
   copied,
   processedImageSrc,
+  compressedImageSrc,
+  compressedSize,
+  compressionRatio,
 }) {
   const [activeTool, setActiveTool] = useState("analysis");
 
@@ -88,14 +91,15 @@ export default function Studio({
       <PreviewPanel
         imageData={imageData}
         processedImageSrc={processedImageSrc}
+        compressedImageSrc={compressedImageSrc}
         images={images}
         activeImageIndex={activeImageIndex}
         onImageChange={handleImageChange}
         formatFileSize={formatFileSize}
         activeTool={activeTool}
         compressionQuality={compressionQuality}
-        compressedSize={imageData?.compressedSize}
-        compressionRatio={imageData?.compressionRatio}
+        compressedSize={compressedSize}
+        compressionRatio={compressionRatio}
         faviconSizes={[16, 32, 48, 64, 128, 256]}
         copyToClipboard={copyToClipboard}
         copied={copied}
