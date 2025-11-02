@@ -1,10 +1,7 @@
 /* Background tab specific styles */
 
 .container {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  margin-top: 2rem;
+  width: 100%;
 }
 
 .card {
@@ -12,6 +9,7 @@
   border-radius: 0.5rem;
   border: 1px solid #e5e7eb;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  width: 100%;
 }
 
 .cardHeader {
@@ -20,16 +18,23 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
 .cardHeaderRight {
   display: flex;
   align-items: center;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .cardContent {
   padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
 }
 
 .titleContent {
@@ -56,29 +61,6 @@
 
 .extraText {
   font-size: 0.875rem;
-}
-
-.content {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.grid {
-  display: grid;
-  gap: 1.5rem;
-}
-
-@media (min-width: 768px) {
-  .grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-.leftColumn {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
 }
 
 .removeBackgroundContainer {
@@ -167,30 +149,28 @@
   background-color: #be185d;
 }
 
-.rightColumn {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
+/* Responsive styles */
+@media (max-width: 768px) {
+  .cardHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 
-.previewLabel {
-  font-size: 1rem;
-  font-weight: 500;
-  display: block;
-}
+  .cardHeaderRight {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+  }
 
-.previewContainer {
-  padding: 1.5rem;
-  border-radius: 0.75rem;
-  background: linear-gradient(to bottom right, #f1f5f9, #e2e8f0);
-}
+  .cardContent {
+    padding: 1rem;
+  }
 
-.previewImage {
-  height: auto;
-  max-height: 20rem;
-  object-fit: contain;
-  margin-left: auto;
-  margin-right: auto;
-  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  border-radius: 0.5rem;
+  .colorPicker {
+    grid-template-columns: 1fr;
+  }
+
+  .extraText {
+    font-size: 0.8rem;
+  }
 }

@@ -58,9 +58,6 @@ export default function BorderRadiusTab({
           </div>
         </div>
         <div className={styles.cardContent}>
-        <div className={styles.content}>
-          <div className={styles.grid}>
-            <div className={styles.leftColumn}>
               <div className={styles.uniformRadiusContainer}>
                 <Text strong className={styles.uniformRadiusText}>
                   Uniform radius for all corners
@@ -268,36 +265,6 @@ export default function BorderRadiusTab({
               >
                 Download Rounded Image
               </Button>
-            </div>
-
-            <div className={styles.rightColumn}>
-              <Text strong className={styles.previewLabel}>
-                Live Preview
-              </Text>
-              <div className={styles.previewContainer}>
-                <div className={parentStyles.imageWithFullscreen}>
-                  <img
-                    src={displaySrc}
-                    alt="Border radius preview"
-                    className={styles.previewImage}
-                    style={{
-                      borderTopLeftRadius: `${localCornerRadius.topLeft}%`,
-                      borderTopRightRadius: `${localCornerRadius.topRight}%`,
-                      borderBottomLeftRadius: `${localCornerRadius.bottomLeft}%`,
-                      borderBottomRightRadius: `${localCornerRadius.bottomRight}%`,
-                    }}
-                  />
-                  <div
-                    className={parentStyles.fullscreenOverlay}
-                    onClick={openFullscreen}
-                  >
-                    <Maximize className={parentStyles.fullscreenIcon} />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
         </div>
       </div>
     </div>

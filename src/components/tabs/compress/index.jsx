@@ -242,9 +242,6 @@ export default function CompressTab({
           </div>
         </div>
         <div className={styles.cardContent}>
-        <div className={styles.content}>
-          <div className={styles.grid}>
-            <div className={styles.leftColumn}>
               <div className={styles.sliderSection}>
                 <Text strong className={styles.sliderLabel}>
                   Compression Quality: {tempQuality}%
@@ -603,108 +600,6 @@ export default function CompressTab({
                 </div>
               )}
 
-              {/* Before/After Comparison Slider */}
-              {compressedPreview && (
-                <div className={styles.comparisonSection}>
-                  <Text
-                    strong
-                    style={{ marginBottom: "8px", display: "block" }}
-                  >
-                    Before/After Comparison
-                  </Text>
-                  <div
-                    ref={comparisonRef}
-                    className={styles.comparisonContainer}
-                    onMouseDown={handleMouseDown}
-                  >
-                    {/* Fullscreen button */}
-                    <div
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        openFullscreen();
-                      }}
-                      style={{
-                        position: "absolute",
-                        top: "12px",
-                        right: "12px",
-                        zIndex: 30,
-                        cursor: "pointer",
-                        backgroundColor: "rgba(0, 0, 0, 0.7)",
-                        borderRadius: "50%",
-                        padding: "8px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                      title="View fullscreen"
-                    >
-                      <Maximize
-                        style={{
-                          width: "20px",
-                          height: "20px",
-                          color: "white",
-                        }}
-                      />
-                    </div>
-
-                    {/* Compressed image (full) */}
-                    <div className={styles.comparisonImageWrapper}>
-                      <img
-                        src={compressedPreview}
-                        alt="Compressed"
-                        className={styles.comparisonImage}
-                      />
-                      <div
-                        className={styles.comparisonLabel}
-                        style={{ right: "8px" }}
-                      >
-                        After ({tempQuality}%)
-                      </div>
-                    </div>
-
-                    {/* Original image (clipped) */}
-                    <div
-                      className={styles.comparisonImageWrapper}
-                      style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        width: "100%",
-                        height: "100%",
-                        clipPath: `inset(0 ${100 - comparisonPosition}% 0 0)`,
-                      }}
-                    >
-                      <img
-                        src={displaySrc}
-                        alt="Original"
-                        className={styles.comparisonImage}
-                      />
-                      <div
-                        className={styles.comparisonLabel}
-                        style={{ left: "8px" }}
-                      >
-                        Before (Original)
-                      </div>
-                    </div>
-
-                    {/* Slider handle */}
-                    <div
-                      className={styles.comparisonSlider}
-                      style={{ left: `${comparisonPosition}%` }}
-                    >
-                      <div className={styles.comparisonHandle}>
-                        <div className={styles.comparisonHandleIcon}>⟷</div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className={styles.comparisonHint}>
-                    <Text type="secondary" style={{ fontSize: "12px" }}>
-                      Drag the slider to compare original vs compressed
-                    </Text>
-                  </div>
-                </div>
-              )}
-
               <Button
                 type="primary"
                 onClick={downloadSmartCompressed}
@@ -731,14 +626,13 @@ export default function CompressTab({
                   {smartCompressResult.quality}% quality)
                 </Text>
               )}
-            </div>
 
-            <div className={styles.rightColumn}>
+              {/* Compression Analysis */}
               <div className={styles.analysisSection}>
                 <Text strong className={styles.analysisSectionTitle}>
                   Compression Analysis
                 </Text>
-                <div className={styles.analysisSection}>
+                <div className={styles.infoBoxes}>
                   <div className={`${styles.infoBox} ${styles.infoBoxBlue}`}>
                     <div
                       className={`${styles.infoBoxTitle} ${styles.infoBoxTitleBlue}`}
@@ -787,9 +681,6 @@ export default function CompressTab({
                   )}
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
         </div>
       </div>
     </div>

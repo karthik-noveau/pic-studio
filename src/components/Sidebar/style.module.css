@@ -1,0 +1,178 @@
+.sidebar {
+  width: 280px;
+  background: white;
+  border-right: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow-y: auto;
+  position: sticky;
+  top: 0;
+}
+
+.sidebarHeader {
+  padding: 2rem 1.5rem 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.sidebarTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem 0;
+}
+
+.sidebarSubtitle {
+  font-size: 0.875rem;
+  margin: 0;
+  opacity: 0.95;
+}
+
+.navMenu {
+  padding: 1rem 0;
+  flex: 1;
+}
+
+.navItem {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  text-align: left;
+}
+
+.navItem:hover {
+  background: #f7fafc;
+}
+
+.navItemActive {
+  background: #edf2ff;
+  color: #667eea;
+}
+
+.navItemImport {
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 0.5rem;
+}
+
+.navItemContent {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.navIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #718096;
+  flex-shrink: 0;
+}
+
+.navItemActive .navIcon {
+  color: #667eea;
+}
+
+.navItemImport .navIcon {
+  color: #48bb78;
+}
+
+.navText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.navLabel {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.navItemActive .navLabel {
+  color: #667eea;
+}
+
+.navDescription {
+  font-size: 0.75rem;
+  color: #a0aec0;
+}
+
+.activeIndicator {
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  position: absolute;
+  right: 0;
+  top: 0;
+  border-radius: 4px 0 0 4px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 240px;
+  }
+
+  .navItem {
+    padding: 0.875rem 1rem;
+  }
+
+  .navIcon {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .navLabel {
+    font-size: 0.9rem;
+  }
+
+  .navDescription {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    border-right: none;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .navMenu {
+    display: flex;
+    overflow-x: auto;
+    padding: 0.5rem;
+  }
+
+  .navItem {
+    flex-shrink: 0;
+    padding: 0.75rem 1rem;
+  }
+
+  .navText {
+    display: none;
+  }
+
+  .navIcon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .activeIndicator {
+    width: 100%;
+    height: 3px;
+    top: auto;
+    bottom: 0;
+    border-radius: 3px 3px 0 0;
+  }
+}

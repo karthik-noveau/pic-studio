@@ -403,3 +403,42 @@
   opacity: 0.75;
   margin-left: 0.5rem;
 }
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .cardHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .cardHeaderRight {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .cardContent {
+    padding: 1rem;
+  }
+
+  .sidebarContent {
+    padding: 1rem;
+  }
+
+  .inputGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .ratioGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .extraText {
+    font-size: 0.8rem;
+  }
+
+  .cropContainer {
+    min-height: 300px;
+    max-height: 400px;
+  }
+}

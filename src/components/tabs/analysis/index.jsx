@@ -24,43 +24,7 @@ export default function AnalysisTab({
 }) {
   return (
     <div className={styles.container}>
-      <div className={styles.mainGrid}>
-        {/* Left Column - Image Preview */}
-        <div className={styles.leftColumn}>
-          <div className={styles.card}>
-            <div className={styles.cardHeader}>
-              <div className={`${styles.iconWrapper} ${styles.blueIcon}`}>
-                <ImageIcon style={{ width: '20px', height: '20px', color: '#2563eb' }} />
-              </div>
-              Image Preview
-            </div>
-            <div className={styles.cardContent}>
-            <div className={styles.imagePreviewContainer}>
-              <div className={parentStyles.imageWithFullscreen}>
-                <img
-                  src={imageData.src || "/placeholder.svg"}
-                  alt="Uploaded image"
-                  className={styles.imagePreview}
-                  style={{
-                    transform: `scale(${zoomLevel / 100})`,
-                    transformOrigin: 'center center',
-                    transition: 'transform 0.2s ease',
-                  }}
-                />
-                <div
-                  className={parentStyles.fullscreenOverlay}
-                  onClick={openFullscreen}
-                >
-                  <MaximizeIcon className={parentStyles.fullscreenIcon} />
-                </div>
-              </div>
-            </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Column - Analysis Details */}
-        <div className={styles.rightColumn}>
+      <div className={styles.singleColumn}>
           <div className={styles.card}>
             <div className={styles.cardHeader}>
               <div className={`${styles.iconWrapper} ${styles.blueIcon}`}>
@@ -280,7 +244,6 @@ export default function AnalysisTab({
               </div>
             </div>
           )}
-        </div>
       </div>
     </div>
   );

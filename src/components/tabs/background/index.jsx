@@ -167,9 +167,6 @@ export default function BackgroundTab({
           </div>
         </div>
         <div className={styles.cardContent}>
-          <div className={styles.content}>
-            <div className={styles.grid}>
-              <div className={styles.leftColumn}>
                 {/* AI Background Removal Section */}
                 <div
                   className={styles.aiRemovalSection}
@@ -441,75 +438,6 @@ export default function BackgroundTab({
                     Download with New Background
                   </Button>
                 )}
-              </div>
-
-              <div className={styles.rightColumn}>
-                <Text strong className={styles.previewLabel}>
-                  {removedBgImage
-                    ? "Background Removed Preview"
-                    : "Live Preview"}
-                </Text>
-                <div className={styles.previewContainer}>
-                  <div className={parentStyles.imageWithFullscreen}>
-                    <img
-                      src={removedBgImage ? removedBgImage.dataUrl : displaySrc}
-                      alt="Background preview"
-                      className={styles.previewImage}
-                      style={{
-                        backgroundColor:
-                          removedBgImage && !removeBackground
-                            ? backgroundColor
-                            : removeBackground || removedBgImage
-                            ? "transparent"
-                            : backgroundColor,
-                        backgroundImage:
-                          (removeBackground || removedBgImage) &&
-                          removedBgImage &&
-                          removeBackground
-                            ? "linear-gradient(45deg, #e2e8f0 25%, transparent 25%), linear-gradient(-45deg, #e2e8f0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #e2e8f0 75%), linear-gradient(-45deg, transparent 75%, #e2e8f0 75%)"
-                            : "none",
-                        backgroundSize:
-                          (removeBackground || removedBgImage) &&
-                          removedBgImage &&
-                          removeBackground
-                            ? "20px 20px"
-                            : "auto",
-                        backgroundPosition:
-                          (removeBackground || removedBgImage) &&
-                          removedBgImage &&
-                          removeBackground
-                            ? "0 0, 0 10px, 10px -10px, -10px 0px"
-                            : "auto",
-                      }}
-                    />
-                    <div
-                      className={parentStyles.fullscreenOverlay}
-                      onClick={openFullscreen}
-                    >
-                      <Maximize className={parentStyles.fullscreenIcon} />
-                    </div>
-                  </div>
-                </div>
-                {removedBgImage && (
-                  <div
-                    style={{
-                      marginTop: "12px",
-                      padding: "12px",
-                      borderRadius: "8px",
-                      border: "1px solid #10b981",
-                    }}
-                  >
-                    <Text style={{ fontSize: "12px", color: "#15803d" }}>
-                      ✓ Background successfully removed!{" "}
-                      {removeBackground
-                        ? "Toggle off transparency to add a custom color."
-                        : `Current background: ${backgroundColor}`}
-                    </Text>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>

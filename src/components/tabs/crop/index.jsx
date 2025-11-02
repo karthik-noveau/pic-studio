@@ -1,15 +1,13 @@
 import { useState, useEffect } from "react";
 import { Button, Input, Typography, Slider, Divider, Switch } from "antd";
 import {
-  Crop,
-  RotateCcw,
   Download,
   MousePointer2,
   Settings,
+  RotateCcw,
 } from "lucide-react";
 
 import styles from "./style.module.css";
-import DraggableCrop from "./draggable-crop";
 
 const { Text } = Typography;
 
@@ -56,41 +54,14 @@ export default function CropTab({
         height: cropArea.height,
       });
     }
-  }, [showCenterGrid, imageData.width, imageData.height, setCropArea]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showCenterGrid, imageData.width, imageData.height]);
 
   // Update scale value when crop area changes (from dragging/resizing)
   useEffect(() => {
     const newScale = Math.round((cropArea.width / imageData.width) * 100);
     setScaleValue(newScale);
   }, [cropArea.width, imageData.width]);
-
-  // Check if crop area is at center position and update toggle accordingly
-  useEffect(() => {
-    // Calculate expected center position for current crop dimensions
-    const expectedCenterX = (imageData.width - cropArea.width) / 2;
-    const expectedCenterY = (imageData.height - cropArea.height) / 2;
-
-    const tolerance = 2; // 2px tolerance for floating point calculations
-
-    const isCentered =
-      Math.abs(cropArea.x - expectedCenterX) < tolerance &&
-      Math.abs(cropArea.y - expectedCenterY) < tolerance;
-
-    // Only update if there's a mismatch to avoid infinite loops
-    if (isCentered && !showCenterGrid) {
-      setShowCenterGrid(true);
-    } else if (!isCentered && showCenterGrid) {
-      setShowCenterGrid(false);
-    }
-  }, [
-    cropArea.x,
-    cropArea.y,
-    cropArea.width,
-    cropArea.height,
-    imageData.width,
-    imageData.height,
-    showCenterGrid,
-  ]);
 
   // Update temp values when crop area changes
   useEffect(() => {
@@ -101,11 +72,24 @@ export default function CropTab({
   }, [cropArea.width, cropArea.height, cropArea.x, cropArea.y]);
   return (
     <div className={styles.container}>
-      <div className={styles.mainGrid}>
-        {/* Enhanced Sidebar - Now on Left */}
-        <div className={styles.sidebarColumn}>
+        {/* Crop Controls */}
           <div className={styles.card}>
             <div className={styles.sidebarContent}>
+              {/* Revert Button */}
+              {hasSettingsChanged().crop && (
+                <div style={{ marginBottom: "1rem" }}>
+                  <Button
+                    onClick={revertCrop}
+                    size="large"
+                    block
+                    className={styles.revertButton}
+                    icon={<RotateCcw className={styles.icon} />}
+                  >
+                    Revert to Original
+                  </Button>
+                </div>
+              )}
+
               {/* Original Size */}
               <div className={`${styles.sizeBox} ${styles.originalSizeBox}`}>
                 <h3
@@ -569,92 +553,6 @@ export default function CropTab({
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Main Crop Canvas - Now on Right */}
-        <div className={styles.canvasColumn}>
-          <div className={styles.card}>
-            <div className={styles.cardHeader}>
-              <div className={styles.cardTitle}>
-                <div className={styles.iconWrapper}>
-                  <Crop
-                    style={{
-                      width: "20px",
-                      height: "20px",
-                      color: "#059669",
-                    }}
-                  />
-                </div>
-                Professional Crop Tool
-              </div>
-              <div className={styles.cardHeaderRight}>
-                {hasSettingsChanged().crop && (
-                  <Button
-                    onClick={revertCrop}
-                    size="small"
-                    className={styles.revertButton}
-                    icon={<RotateCcw className={styles.icon} />}
-                  >
-                    Revert
-                  </Button>
-                )}
-                <Text type="secondary" className={styles.extraText}>
-                  Drag to move, use handles to resize with precision
-                </Text>
-              </div>
-            </div>
-            <div className={styles.cardContent}>
-              {/* Update the crop container styling */}
-              <div
-                ref={cropContainerRef}
-                className={styles.cropContainer}
-                style={{
-                  aspectRatio: `${imageData.width}/${imageData.height}`,
-                }}
-              >
-                <img
-                  src={imageData.src || "/placeholder.svg"}
-                  alt="Crop preview"
-                  className={styles.cropImage}
-                />
-
-                {/* Grid overlay - centered when showCenterGrid is true */}
-                {showGrid && (
-                  <div
-                    style={{
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      width: "100%",
-                      height: "100%",
-                      display: "grid",
-                      gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-                      gridTemplateRows: "repeat(3, minmax(0, 1fr))",
-                      pointerEvents: "none",
-                      zIndex: 1,
-                    }}
-                  >
-                    {Array.from({ length: 9 }).map((_, i) => (
-                      <div
-                        key={i}
-                        style={{ border: "1px solid rgba(255, 255, 255, 0.5)" }}
-                      />
-                    ))}
-                  </div>
-                )}
-
-                <DraggableCrop
-                  imageData={imageData}
-                  cropArea={cropArea}
-                  setCropArea={setCropArea}
-                  showGrid={false}
-                  containerRef={cropContainerRef}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
