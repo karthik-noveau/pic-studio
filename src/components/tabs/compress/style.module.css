@@ -1,0 +1,362 @@
+/* Compress tab specific styles */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.card {
+  background: white;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.cardHeader {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cardHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cardContent {
+  padding: 1.5rem;
+}
+
+.titleContent {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.iconWrapper {
+  padding: 0.5rem;
+  background-color: #fed7aa;
+  border-radius: 0.5rem;
+}
+
+.revertButton {
+  color: #ea580c;
+  border-color: #fed7aa;
+  background-color: transparent;
+}
+
+.revertButton:hover {
+  background-color: #fff7ed;
+}
+
+.extraText {
+  font-size: 0.875rem;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.sliderSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sliderLabel {
+  font-size: 1rem;
+  font-weight: 500;
+  display: block;
+}
+
+.sliderMarkers {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.presetsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.presetsTitle {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.presetsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.presetButton {
+  height: 2.5rem;
+}
+
+.statsContainer {
+  padding: 1rem;
+  background-color: #fff7ed;
+  border-radius: 0.75rem;
+}
+
+.statsContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.statRow {
+  display: flex;
+  justify-content: space-between;
+}
+
+.statLabel {
+  color: #c2410c;
+}
+
+.statValue {
+  font-weight: bold;
+  color: #9a3412;
+}
+
+.statValueGreen {
+  font-weight: bold;
+  color: #16a34a;
+}
+
+.downloadButton {
+  width: 100%;
+  height: 3rem;
+  background-color: #ea580c;
+}
+
+.downloadButton:hover {
+  background-color: #c2410c;
+}
+
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.analysisSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.analysisSectionTitle {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.infoBox {
+  padding: 1rem;
+  border-radius: 0.75rem;
+}
+
+.infoBoxBlue {
+  background-color: #eff6ff;
+}
+
+.infoBoxGreen {
+  background-color: #f0fdf4;
+}
+
+.infoBoxAmber {
+  background-color: #fffbeb;
+}
+
+.infoBoxTitle {
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.infoBoxTitleBlue {
+  color: #1e40af;
+}
+
+.infoBoxTitleGreen {
+  color: #15803d;
+}
+
+.infoBoxTitleAmber {
+  color: #b45309;
+}
+
+.infoBoxContent {
+  font-size: 0.875rem;
+}
+
+.infoBoxContentBlue {
+  color: #2563eb;
+}
+
+.infoBoxContentGreen {
+  color: #16a34a;
+}
+
+.infoBoxContentAmber {
+  color: #d97706;
+}
+
+.guidelinesList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* Before/After Comparison Slider */
+.comparisonSection {
+  margin-top: 1.5rem;
+}
+
+.comparisonContainer {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  cursor: ew-resize;
+  user-select: none;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.comparisonImageWrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.comparisonImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.comparisonLabel {
+  position: absolute;
+  top: 12px;
+  background-color: rgba(0, 0, 0, 0.75);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.comparisonSlider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background-color: white;
+  z-index: 20;
+  transform: translateX(-50%);
+  pointer-events: none;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.comparisonHandle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 48px;
+  height: 48px;
+  background-color: white;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  cursor: ew-resize;
+}
+
+.comparisonHandleIcon {
+  font-size: 20px;
+  color: #374151;
+  font-weight: bold;
+}
+
+.comparisonHint {
+  margin-top: 8px;
+  text-align: center;
+}
+
+/* Smart Compression Section */
+.smartCompressSection {
+  padding: 1rem;
+  background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+  border-radius: 0.75rem;
+  border: 2px solid #c4b5fd;
+}
+
+.complexityInfo {
+  padding: 0.75rem;
+  background-color: white;
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.smartCompressButton {
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  transition: all 0.3s ease;
+}
+
+.smartCompressButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.6);
+}
+
+.smartResult {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: white;
+  border-radius: 0.75rem;
+  border: 2px solid #10b981;
+}
+
+.smartResultHeader {
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
+}

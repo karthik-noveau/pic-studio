@@ -62,6 +62,13 @@ export default function UrlInputTab({
           ))}
         </div>
       </div>
+      <div style={{ marginTop: '16px', padding: '12px', backgroundColor: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+        <Text style={{ fontSize: '13px', color: '#64748b' }}>
+          <strong>Note:</strong> Some images may have CORS restrictions. If loading fails, try:
+          <br />• Right-click the image → "Save image as" → Upload via the Upload tab
+          <br />• Use a different image URL that allows cross-origin access
+        </Text>
+      </div>
     </div>
   );
 }

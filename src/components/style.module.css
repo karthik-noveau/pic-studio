@@ -6,6 +6,26 @@
   min-height: 100vh;
 }
 
+/* Card styles */
+.card {
+  background: white;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.cardHeader {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cardContent {
+  padding: 1.5rem;
+}
+
 /* Main card */
 .mainCard {
   background: #ffffff;
@@ -657,6 +677,37 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.urlBadge {
+  position: absolute;
+  bottom: 0.5rem;
+  left: 0.5rem;
+  background-color: #8b5cf6;
+  color: white;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  font-size: 0.65rem;
+}
+
+.thumbnailFromUrl {
+  border: 2px dotted #8b5cf6 !important;
+  position: relative;
+}
+
+.thumbnailFromUrl::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 0.75rem;
+  pointer-events: none;
+}
+
 .deleteButton {
   position: absolute;
   top: 0.5rem;
@@ -703,6 +754,30 @@
   color: #6b7280;
 }
 
+.thumbnailFileSize {
+  font-size: 0.675rem;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+.thumbnailCompressedSize {
+  font-size: 0.675rem;
+  color: #10b981;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.compressionBadge {
+  background-color: #d1fae5;
+  color: #059669;
+  padding: 0.05rem 0.35rem;
+  border-radius: 0.25rem;
+  font-size: 0.625rem;
+  font-weight: 700;
+}
+
 /* Add More Images Button */
 .addMoreButton {
   position: relative;
@@ -744,4 +819,75 @@
   font-weight: 600;
   color: #2563eb;
   text-align: center;
+}
+
+/* Zoom Control */
+.zoomCard {
+  border: 0;
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1),
+    0 8px 10px -6px rgb(0 0 0 / 0.1);
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
+  margin-top: 2rem;
+}
+
+.zoomControl {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.zoomHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.zoomSliderContainer {
+  padding: 0 0.5rem;
+}
+
+/* Fullscreen Icon Overlay */
+.imageWithFullscreen {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fullscreenOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.imageWithFullscreen:hover .fullscreenOverlay {
+  opacity: 1;
+}
+
+.fullscreenIcon {
+  width: 3rem;
+  height: 3rem;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 50%;
+  padding: 0.75rem;
+  transition: transform 0.2s ease;
+}
+
+.fullscreenIcon:hover {
+  transform: scale(1.1);
 }

@@ -5,7 +5,8 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
   background: #f8f9fa;
   min-height: 100vh;
   color: #1f2937;
@@ -122,14 +123,6 @@ body {
 .ant-slider-track {
   background: #6366f1 !important;
   height: 4px !important;
-}
-
-.ant-slider-handle {
-  border: 2px solid #6366f1 !important;
-  background: #ffffff !important;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
-  width: 14px !important;
-  height: 14px !important;
 }
 
 .ant-switch {

@@ -26,7 +26,8 @@
       "Bash(done)",
       "Bash(npm install:*)",
       "Bash(find:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(npm uninstall:*)"
     ],
     "deny": [],
     "ask": []
