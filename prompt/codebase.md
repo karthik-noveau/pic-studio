@@ -1,87 +1,135 @@
-## 📁 **Folder Structure Example**
+# 🏗️ Project Architecture & Code Standards
+
+This document defines the **project structure, naming conventions, styling rules, and linting setup** to ensure consistent, scalable, and maintainable React codebases.
+
+---
+
+## 📂 1. Folder Structure Standards
 
 ```
 src/
-  components/
-    tabs/
-      crop/
-        ├── index.jsx
-        └── style.module.css
-      compress/
-        ├── constants.js
-        ├── utils.js
-        ├── index.jsx
-        └── style.module.css
-      rotate/
-        ├── index.jsx
-        └── style.module.css
-    header/
-      ├── index.jsx
-      └── style.module.css
-  common/
-    ├── utils.js
-    ├── constants.js
+  assets/
+    ├── logo/
+    ├── page-name/
+
+  components/                → Reusable UI components shared across the app
+
+  common/                    → Shared logic and utilities
+    ├── utils/
+    │   ├── background.removal.js  
+    │   └── index.js         // Export all utils here
+    ├── constants/
+    │   └── index.js         // Export all constants here
     └── hooks/
-        └── useExampleHook.js
-  index.jsx
+        ├── processed.image.js  
+        └── index.js         // Export all hooks here
+
+  pages/                     → Page-level or feature-specific modules
+    page-name/
+      ├── index.jsx
+      ├── style.module.css
+      ├── utils.js
+      └── constants.js
+
+  theme/                     → Global styling assets
+    ├── override.css         // Base resets (e.g., body { margin: 0; })
+    ├── colors.css           // Custom color variables (--black-color, etc.)
+    ├── font.css             // Font sizing variables (--font-size-6, etc.)
+
+App.jsx
+main.js
+README.md
 ```
 
----
+### Notes
 
-## 🎨 **Component & Style Guide**
-
-### 1. 🧩 Component Organization
-
-- Group components **by feature or function** within relevant directories.
-  Example:
-
-  - `tabs/` contains all tab-related components (`crop`, `compress`, `rotate`).
-  - `header/` contains the main layout or header component.
-
-- Each component must reside in its **own folder**, keeping its logic, styles, and helpers self-contained.
-
-- If multiple components share logic, constants, or helpers, move them into a centralized **`/common`** folder (e.g., `common/utils.js` or `common/hooks/`).
+* ✅ Every **component** or **page** must include its own `style.module.css` file.
+* 🧩 Keep each folder **focused**, **self-contained**, and **purpose-driven**.
 
 ---
 
-### 2. 🗂️ File Naming Conventions
+## 🧩 2. General Rules
 
-| Type                 | Naming Pattern                               | Example                                  |
-| -------------------- | -------------------------------------------- | ---------------------------------------- |
-| Component File       | `index.jsx` or `draggable.crop.jsx`          | `src/components/header/index.jsx`        |
-| Style File           | `style.module.css`                           | `src/components/header/style.module.css` |
-| Utility / Helper     | lowercase (e.g., `utils.js`, `constants.js`) | `src/components/tabs/compress/utils.js`  |
-| Shared Functionality | Placed under `/common/`                      | `src/common/utils.js`                    |
+### 📁 Feature-Based Grouping
 
-**Notes:**
+* Each **page** or **feature** should contain its logic, styles, and helpers within its folder.
+* The structure should be self-explanatory — opening a folder should clearly indicate its purpose.
 
-- **Folder names:** Use `kebab-case` (e.g., `draggable-crop/`).
-- **Component names:** Use **PascalCase** inside code (e.g., `DraggableCrop`).
-- **Component filenames (optional):** Use dot notation when needed for clarity (e.g., `draggable.crop.jsx`).
+### ♻️ Shared Logic
+
+* Shared logic → `/common/hooks` or `/common/utils`
+* Shared constants → `/common/constants`
+* Always **import shared utilities** — never copy-paste between modules.
+
+### 🧱 Reusable Components
+
+* Components reused across multiple areas belong in `/components/`.
+* Build complex interfaces by composing **small, modular, and testable** components.
+
+### 🧠 Code Clarity
+
+* Keep components **small, focused, and readable**.
+* One file = one responsibility.
+* Favor **clarity over cleverness** — code should be understandable at first glance.
 
 ---
 
-### 3. 🎯 CSS Class Naming
+## ✨ 3. Naming Conventions
 
-- Use **camelCase** for all CSS class names.
-- Class names should be **clear and descriptive**, indicating the element’s purpose.
+| Entity Type               | Format                      | Example                              |
+| ------------------------- | --------------------------- | ------------------------------------ |
+| Folders                   | kebab-case                  | `image-crop/`, `file-uploader/`      |
+| Component Files           | `index.jsx`                 | `src/components/tabs/crop/index.jsx` |
+| Style Files               | `style.module.css`          | `src/pages/home/style.module.css`    |
+| Utility / Constant Files  | lowercase                   | `utils.js`, `constants.js`           |
+| Component Names (in code) | PascalCase                  | `export function ImageCrop()`        |
+| Hook Names                | camelCase with “use” prefix | `useImagePreview.js`                 |
+| CSS Class Names           | camelCase                   | `.imageContainer`, `.actionButton`   |
+
+---
+
+## 🎨 4. Styling Conventions
+
+* ✅ Use **CSS Modules** (`style.module.css`) for scoped styling.
+* ✅ Keep **global styles** (colors, fonts, base resets) in `/theme/`.
+* ❌ No inline styles.
+* ❌ No Tailwind CSS.
+
+**Example:**
 
 ```css
-.imageContainer {
-  ...;
+/* style.module.css */
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
-.cropArea {
-  ...;
+
+.imagePreview {
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
-.headerTitle {
-  ...;
+
+.actionButton {
+  margin-top: 12px;
 }
 ```
 
 ---
 
-### 4. ⚙️ General Best Practices
+## 🧠 8. Universal AI Code Generation Prompt
 
-- Keep each component **modular and reusable** — avoid unnecessary cross-imports between component folders.
-- Co-locate component-specific files like constants or utilities **inside the same folder**.
-- If the same file or logic is reused across multiple components, move it to the **`/common`** directory.
+### **AI Code Generation Standards**
+
+When generating React code for this project, **always** follow these rules:
+
+1. Follow the **exact folder structure** shown above.
+2. ❌ Do **not** create or use `src/App.css` or `src/index.css`.
+3. ✅ Use `/theme/` for all global styling and `style.module.css` for component-level styles.
+4. Export each component as a **named** PascalCase function — e.g., `export function ImageCrop()`.
+5. Use **only CSS Modules** — no inline or Tailwind styles.
+6. Keep files **single-purpose**. Split complex logic into smaller components or hooks.
+7. Place reusable logic in `/common/hooks` or `/common/utils`, and always update `index.js` exports.
+8. Follow all **naming**, **structure**, and **styling** rules defined in this document.
+
+ 
