@@ -12,6 +12,7 @@ export default function DraggableCrop({
   setCropArea,
   showGrid,
   containerRef,
+  style,
 }) {
   const [isDragging, setIsDragging] = useState(false);
   const [localCropArea, setLocalCropArea] = useState(cropArea);
@@ -30,10 +31,8 @@ export default function DraggableCrop({
 
   // Sync local crop area with prop when cropArea changes (unless we're dragging)
   useEffect(() => {
-    // Always update on first mount or when not dragging
-    if (!isDragging || !isInitializedRef.current) {
+    if (!isDragging) {
       setLocalCropArea(cropArea);
-      isInitializedRef.current = true;
     }
   }, [cropArea, isDragging]);
 
@@ -213,13 +212,12 @@ export default function DraggableCrop({
     width: localCropArea.width * scaleX,
     height: localCropArea.height * scaleY,
     border: "2px solid #3b82f6",
-    boxShadow: "0 0 0 9999px rgba(0, 0, 0, 0.6)",
     cursor: "move",
     zIndex: 2,
   };
 
   return (
-    <div style={cropStyle} onMouseDown={(e) => handleMouseDown(e, "move")}>
+    <div style={{ ...cropStyle, ...style }} onMouseDown={(e) => handleMouseDown(e, "move")}>
       {/* Corner handles */}
       <div
         className={styles.handleCorner + " " + styles.handleNw}

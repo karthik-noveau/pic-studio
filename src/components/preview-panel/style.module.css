@@ -520,7 +520,7 @@
   align-items: center;
   justify-content: center;
   background: #f7fafc;
-  padding: 1.5rem;
+  /* Removed padding */
 }
 
 .cropContainer {
@@ -528,8 +528,6 @@
   background: linear-gradient(to bottom right, #f1f5f9, #cbd5e1);
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  min-height: 400px;
-  max-height: 600px;
   display: flex;
   align-items: center;
   justify-content: center;

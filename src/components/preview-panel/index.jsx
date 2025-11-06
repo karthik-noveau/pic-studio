@@ -92,10 +92,13 @@ export default function PreviewPanel({
     setIsPanning(false);
   }, []);
 
-  const handleImageSwitch = useCallback((index) => {
-    onImageChange(index);
-    handleResetView();
-  }, [onImageChange, handleResetView]);
+  const handleImageSwitch = useCallback(
+    (index) => {
+      onImageChange(index);
+      handleResetView();
+    },
+    [onImageChange, handleResetView]
+  );
 
   if (!imageData) {
     return (
@@ -172,12 +175,21 @@ export default function PreviewPanel({
             className={styles.cropContainer}
             style={{
               aspectRatio: `${imageData.width}/${imageData.height}`,
+              overflow: "hidden",
             }}
           >
             <img
               src={processedImageSrc || imageData.src}
               alt="Crop preview"
               className={styles.cropImage}
+              // style={{
+              //   transform: `scale(${
+              //     imageData.width / cropArea.width
+              //   }) translate(${(-cropArea.x / imageData.width) * 100}%, ${
+              //     (-cropArea.y / imageData.height) * 100
+              //   }%)`,
+              //   transformOrigin: "0 0",
+              // }}
             />
 
             {/* Grid overlay */}
@@ -194,6 +206,12 @@ export default function PreviewPanel({
                   gridTemplateRows: "repeat(3, minmax(0, 1fr))",
                   pointerEvents: "none",
                   zIndex: 1,
+                  transform: `scale(${
+                    imageData.width / cropArea.width
+                  }) translate(${(-cropArea.x / imageData.width) * 100}%, ${
+                    (-cropArea.y / imageData.height) * 100
+                  }%)`,
+                  transformOrigin: "0 0",
                 }}
               >
                 {Array.from({ length: 9 }).map((_, i) => (
@@ -211,6 +229,14 @@ export default function PreviewPanel({
               setCropArea={setCropArea}
               showGrid={false}
               containerRef={cropContainerRef}
+              style={{
+                transform: `scale(${
+                  imageData.width / cropArea.width
+                }) translate(${(-cropArea.x / imageData.width) * 100}%, ${
+                  (-cropArea.y / imageData.height) * 100
+                }%)`,
+                transformOrigin: "0 0",
+              }}
             />
           </div>
         </div>
@@ -242,12 +268,15 @@ export default function PreviewPanel({
       {activeTool === "compress" && imageData && (
         <div className={styles.compressComparisonSection}>
           <div className={styles.comparisonHeader}>
-            <h4 className={styles.comparisonTitle}>Before & After Comparison</h4>
+            <h4 className={styles.comparisonTitle}>
+              Before & After Comparison
+            </h4>
             <div className={styles.comparisonStats}>
               <Tag color="orange">Quality: {compressionQuality}%</Tag>
               {compressedSize && (
                 <Tag color="green">
-                  Saved: {formatFileSize(imageData.fileSize - compressedSize)} ({compressionRatio?.toFixed(1)}%)
+                  Saved: {formatFileSize(imageData.fileSize - compressedSize)} (
+                  {compressionRatio?.toFixed(1)}%)
                 </Tag>
               )}
             </div>
@@ -262,8 +291,15 @@ export default function PreviewPanel({
                 formatFileSize={formatFileSize}
               />
             ) : (
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-                <div style={{ textAlign: 'center', color: '#718096' }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  height: "100%",
+                }}
+              >
+                <div style={{ textAlign: "center", color: "#718096" }}>
                   <p>Generating compressed preview...</p>
                 </div>
               </div>
@@ -277,7 +313,9 @@ export default function PreviewPanel({
         <div className={styles.faviconPreviewSection}>
           <div className={styles.faviconHeader}>
             <h4 className={styles.faviconTitle}>Favicon Preview</h4>
-            <p className={styles.faviconDesc}>Preview how your image looks at different sizes</p>
+            <p className={styles.faviconDesc}>
+              Preview how your image looks at different sizes
+            </p>
           </div>
           <div className={styles.faviconGrid}>
             {(faviconSizes || [16, 32, 48, 64, 128, 256]).map((size) => (
@@ -286,7 +324,7 @@ export default function PreviewPanel({
                   className={styles.faviconWrapper}
                   style={{
                     width: Math.min(size, 128),
-                    height: Math.min(size, 128)
+                    height: Math.min(size, 128),
                   }}
                 >
                   <img
@@ -294,13 +332,15 @@ export default function PreviewPanel({
                     alt={`Favicon ${size}x${size}`}
                     className={styles.faviconImage}
                     style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'contain',
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "contain",
                     }}
                   />
                 </div>
-                <span className={styles.faviconSize}>{size}×{size}px</span>
+                <span className={styles.faviconSize}>
+                  {size}×{size}px
+                </span>
               </div>
             ))}
           </div>
@@ -308,76 +348,85 @@ export default function PreviewPanel({
       )}
 
       {/* Preview Container - Default for other tabs */}
-      {activeTool !== "compress" && activeTool !== "favicon" && activeTool !== "analysis" && activeTool !== "crop" && (
-        <div className={styles.previewContainer}>
-        <div
-          className={styles.imageWrapper}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-          style={{
-            cursor: zoom > 100 ? (isPanning ? "grabbing" : "grab") : "default",
-          }}
-        >
-          <img
-            src={processedImageSrc || imageData.src}
-            alt={imageData.fileName}
-            className={styles.previewImage}
-            style={{
-              transform: `scale(${zoom / 100}) translate(${pan.x}px, ${pan.y}px)`,
-              transition: isPanning ? "none" : "transform 0.2s ease",
-            }}
-          />
-        </div>
+      {activeTool !== "compress" &&
+        activeTool !== "favicon" &&
+        activeTool !== "analysis" &&
+        activeTool !== "crop" && (
+          <div className={styles.previewContainer}>
+            <div
+              className={styles.imageWrapper}
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+              style={{
+                cursor:
+                  zoom > 100 ? (isPanning ? "grabbing" : "grab") : "default",
+              }}
+            >
+              <img
+                src={processedImageSrc || imageData.src}
+                alt={imageData.fileName}
+                className={styles.previewImage}
+                style={{
+                  transform: `scale(${zoom / 100}) translate(${pan.x}px, ${
+                    pan.y
+                  }px)`,
+                  transition: isPanning ? "none" : "transform 0.2s ease",
+                }}
+              />
+            </div>
 
-        {/* Fullscreen Button */}
-        <Button
-          icon={<Maximize />}
-          onClick={() => setShowFullscreen(true)}
-          className={styles.fullscreenButton}
-          type="primary"
-        >
-          Fullscreen
-        </Button>
-      </div>
-      )}
+            {/* Fullscreen Button */}
+            <Button
+              icon={<Maximize />}
+              onClick={() => setShowFullscreen(true)}
+              className={styles.fullscreenButton}
+              type="primary"
+            >
+              Fullscreen
+            </Button>
+          </div>
+        )}
 
       {/* Zoom Controls - Hide for compress, favicon, analysis, and crop tabs */}
-      {activeTool !== "compress" && activeTool !== "favicon" && activeTool !== "analysis" && activeTool !== "crop" && (
-      <div className={styles.zoomControls}>
-        <Button
-          icon={<ZoomOut />}
-          onClick={handleZoomOut}
-          disabled={zoom <= 25}
-          size="small"
-        />
-        <Slider
-          min={25}
-          max={200}
-          step={25}
-          value={zoom}
-          onChange={setZoom}
-          className={styles.zoomSlider}
-          tooltip={{ formatter: (value) => `${value}%` }}
-        />
-        <Button
-          icon={<ZoomIn />}
-          onClick={handleZoomIn}
-          disabled={zoom >= 200}
-          size="small"
-        />
-        <span className={styles.zoomValue}>{zoom}%</span>
-        <Button
-          icon={<RotateCcw />}
-          onClick={handleResetView}
-          size="small"
-          className={styles.resetButton}
-        >
-          Reset
-        </Button>
-      </div>
-      )}
+      {activeTool !== "compress" &&
+        activeTool !== "favicon" &&
+        activeTool !== "analysis" &&
+        activeTool !== "crop" && (
+          <div className={styles.zoomControls}>
+            <Button
+              icon={<ZoomOut />}
+              onClick={handleZoomOut}
+              disabled={zoom <= 25}
+              size="small"
+            />
+            <Slider
+              min={25}
+              max={200}
+              step={25}
+              value={zoom}
+              onChange={setZoom}
+              className={styles.zoomSlider}
+              tooltip={{ formatter: (value) => `${value}%` }}
+            />
+            <Button
+              icon={<ZoomIn />}
+              onClick={handleZoomIn}
+              disabled={zoom >= 200}
+              size="small"
+            />
+            <span className={styles.zoomValue}>{zoom}%</span>
+            <Button
+              icon={<RotateCcw />}
+              onClick={handleResetView}
+              size="small"
+              className={styles.resetButton}
+            >
+              Reset
+            </Button>
+          </div>
+        )}
 
       {/* Fullscreen Modal */}
       <Modal
@@ -415,7 +464,8 @@ export default function PreviewPanel({
           <div className={styles.fullscreenInfo}>
             <div className={styles.fullscreenTitle}>{imageData.fileName}</div>
             <div className={styles.fullscreenMeta}>
-              {imageData.width} × {imageData.height}px • {formatFileSize(imageData.fileSize)}
+              {imageData.width} × {imageData.height}px •{" "}
+              {formatFileSize(imageData.fileSize)}
             </div>
           </div>
         </div>
@@ -425,7 +475,13 @@ export default function PreviewPanel({
 }
 
 // Comparison Slider Component for Compress Tab
-function ComparisonSlider({ originalSrc, compressedSrc, originalSize, compressedSize, formatFileSize }) {
+function ComparisonSlider({
+  originalSrc,
+  compressedSrc,
+  originalSize,
+  compressedSize,
+  formatFileSize,
+}) {
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -442,9 +498,12 @@ function ComparisonSlider({ originalSrc, compressedSrc, originalSize, compressed
   };
 
   // Debug: Check if images are actually different
-  console.log('ComparisonSlider - Original:', originalSrc?.substring(0, 50));
-  console.log('ComparisonSlider - Compressed:', compressedSrc?.substring(0, 50));
-  console.log('Are they the same?', originalSrc === compressedSrc);
+  console.log("ComparisonSlider - Original:", originalSrc?.substring(0, 50));
+  console.log(
+    "ComparisonSlider - Compressed:",
+    compressedSrc?.substring(0, 50)
+  );
+  console.log("Are they the same?", originalSrc === compressedSrc);
 
   return (
     <div
@@ -460,9 +519,14 @@ function ComparisonSlider({ originalSrc, compressedSrc, originalSize, compressed
           alt="Original"
           className={styles.comparisonImage}
         />
-        <div className={styles.comparisonLabel} style={{ left: '10px', backgroundColor: 'rgba(59, 130, 246, 0.9)' }}>
+        <div
+          className={styles.comparisonLabel}
+          style={{ left: "10px", backgroundColor: "rgba(59, 130, 246, 0.9)" }}
+        >
           <span className={styles.labelText}>Original</span>
-          <span className={styles.labelSize}>{formatFileSize(originalSize)}</span>
+          <span className={styles.labelSize}>
+            {formatFileSize(originalSize)}
+          </span>
         </div>
       </div>
 
@@ -478,9 +542,14 @@ function ComparisonSlider({ originalSrc, compressedSrc, originalSize, compressed
           alt="Compressed"
           className={styles.comparisonImage}
         />
-        <div className={styles.comparisonLabel} style={{ right: '10px', backgroundColor: 'rgba(16, 185, 129, 0.9)' }}>
+        <div
+          className={styles.comparisonLabel}
+          style={{ right: "10px", backgroundColor: "rgba(16, 185, 129, 0.9)" }}
+        >
           <span className={styles.labelText}>Compressed</span>
-          <span className={styles.labelSize}>{formatFileSize(compressedSize)}</span>
+          <span className={styles.labelSize}>
+            {formatFileSize(compressedSize)}
+          </span>
         </div>
       </div>
 

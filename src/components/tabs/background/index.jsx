@@ -14,7 +14,7 @@ import {
   autoRemoveBackground,
   isBackgroundRemovalSupported,
   estimateProcessingTime,
-} from "../../../common/backgroundRemoval";
+} from "../../../common/utils/background-removal";
 
 const { Text } = Typography;
 
@@ -31,11 +31,12 @@ export default function BackgroundTab({
   zoomLevel,
   openFullscreen,
   isDownloading,
+  transparentImageSrc, // New prop
+  setTransparentImageSrc, // New prop
 }) {
   const displaySrc = processedImageSrc || imageData?.src || "/placeholder.svg";
   const [isRemoving, setIsRemoving] = useState(false);
   const [removalProgress, setRemovalProgress] = useState(0);
-  const [removedBgImage, setRemovedBgImage] = useState(null);
   const [isSupported, setIsSupported] = useState(true);
 
   // Check if background removal is supported
@@ -68,7 +69,8 @@ export default function BackgroundTab({
         },
       });
 
-      setRemovedBgImage(result);
+      setTransparentImageSrc(result.dataUrl); // Update transparent image in App.jsx state
+      setRemoveBackground(true); // Automatically enable transparent background view
       setRemovalProgress(100);
       message.success("Background removed successfully! 🎉");
     } catch (error) {
@@ -81,10 +83,10 @@ export default function BackgroundTab({
 
   // Download removed background image
   const downloadRemovedBg = () => {
-    if (!removedBgImage) return;
+    if (!transparentImageSrc) return;
 
     const link = document.createElement("a");
-    link.href = removedBgImage.dataUrl;
+    link.href = transparentImageSrc;
     const fileName = imageData.fileName || "image";
     const baseName = fileName.replace(/\.[^/.]+$/, "");
     link.download = `${baseName}-no-bg.png`;
@@ -97,8 +99,8 @@ export default function BackgroundTab({
 
   // Download with custom background
   const downloadWithBackground = () => {
-    if (!removedBgImage) {
-      changeBackground();
+    if (!transparentImageSrc) {
+      message.error("Please remove the background first.");
       return;
     }
 
@@ -134,7 +136,7 @@ export default function BackgroundTab({
       });
     };
 
-    img.src = removedBgImage.dataUrl;
+    img.src = transparentImageSrc;
   };
 
   return (
@@ -167,277 +169,236 @@ export default function BackgroundTab({
           </div>
         </div>
         <div className={styles.cardContent}>
-                {/* AI Background Removal Section */}
-                <div
-                  className={styles.aiRemovalSection}
+          {/* AI Background Removal Section */}
+          <div
+            className={styles.aiRemovalSection}
+            style={{
+              padding: "20px",
+              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+              borderRadius: "12px",
+              marginBottom: "20px",
+              color: "white",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginBottom: "12px",
+              }}
+            >
+              <Sparkles
+                style={{
+                  width: "24px",
+                  height: "24px",
+                  marginRight: "10px",
+                }}
+              />
+              <Text strong style={{ color: "white", fontSize: "16px" }}>
+                AI Background Removal (100% Automatic)
+              </Text>
+            </div>
+            <Text
+              style={{
+                color: "rgba(255,255,255,0.9)",
+                fontSize: "13px",
+                display: "block",
+                marginBottom: "16px",
+              }}
+            >
+              Remove backgrounds from products, people, animals, cars, graphics
+              automatically using AI
+            </Text>
+
+            {isRemoving && (
+              <div style={{ marginBottom: "16px" }}>
+                <Progress
+                  percent={removalProgress}
+                  strokeColor={{
+                    "0%": "#10b981",
+                    "100%": "#059669",
+                  }}
+                  status="active"
+                />
+                <Text
                   style={{
-                    padding: "20px",
-                    background:
-                      "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                    borderRadius: "12px",
-                    marginBottom: "20px",
-                    color: "white",
+                    color: "rgba(255,255,255,0.8)",
+                    fontSize: "12px",
+                    display: "block",
+                    marginTop: "8px",
                   }}
                 >
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      marginBottom: "12px",
-                    }}
-                  >
-                    <Sparkles
-                      style={{
-                        width: "24px",
-                        height: "24px",
-                        marginRight: "10px",
-                      }}
-                    />
-                    <Text strong style={{ color: "white", fontSize: "16px" }}>
-                      AI Background Removal (100% Automatic)
-                    </Text>
-                  </div>
-                  <Text
-                    style={{
-                      color: "rgba(255,255,255,0.9)",
-                      fontSize: "13px",
-                      display: "block",
-                      marginBottom: "16px",
-                    }}
-                  >
-                    Remove backgrounds from products, people, animals, cars,
-                    graphics automatically using AI
-                  </Text>
+                  Processing with AI model... Please wait
+                </Text>
+              </div>
+            )}
 
-                  {isRemoving && (
-                    <div style={{ marginBottom: "16px" }}>
-                      <Progress
-                        percent={removalProgress}
-                        strokeColor={{
-                          "0%": "#10b981",
-                          "100%": "#059669",
-                        }}
-                        status="active"
-                      />
-                      <Text
-                        style={{
-                          color: "rgba(255,255,255,0.8)",
-                          fontSize: "12px",
-                          display: "block",
-                          marginTop: "8px",
-                        }}
-                      >
-                        Processing with AI model... Please wait
-                      </Text>
-                    </div>
-                  )}
+            {!isSupported && (
+              <div
+                style={{
+                  padding: "12px",
+                  backgroundColor: "rgba(239, 68, 68, 0.2)",
+                  borderRadius: "6px",
+                  marginBottom: "12px",
+                }}
+              >
+                <Text style={{ color: "white", fontSize: "12px" }}>
+                  ⚠️ Your browser doesn't support WebGL. Background removal may
+                  not work.
+                </Text>
+              </div>
+            )}
 
-                  {!isSupported && (
-                    <div
-                      style={{
-                        padding: "12px",
-                        backgroundColor: "rgba(239, 68, 68, 0.2)",
-                        borderRadius: "6px",
-                        marginBottom: "12px",
-                      }}
-                    >
-                      <Text style={{ color: "white", fontSize: "12px" }}>
-                        ⚠️ Your browser doesn't support WebGL. Background
-                        removal may not work.
-                      </Text>
-                    </div>
-                  )}
+            <Button
+              type="default"
+              size="large"
+              onClick={handleAutoRemoveBackground}
+              loading={isRemoving}
+              disabled={isRemoving || !isSupported}
+              icon={<Scissors style={{ width: "18px", height: "18px" }} />}
+              style={{
+                width: "100%",
+                height: "48px",
+                backgroundColor: "white",
+                color: "#667eea",
+                border: "none",
+                fontWeight: "bold",
+              }}
+            >
+              {isRemoving
+                ? "Removing Background..."
+                : "Remove Background Automatically"}
+            </Button>
 
-                  <Button
-                    type="default"
-                    size="large"
-                    onClick={handleAutoRemoveBackground}
-                    loading={isRemoving}
-                    disabled={isRemoving || !isSupported}
-                    icon={
-                      <Scissors style={{ width: "18px", height: "18px" }} />
-                    }
-                    style={{
-                      width: "100%",
-                      height: "48px",
-                      backgroundColor: "white",
-                      color: "#667eea",
-                      border: "none",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {isRemoving
-                      ? "Removing Background..."
-                      : "Remove Background Automatically"}
-                  </Button>
+            {transparentImageSrc && (
+              <div
+                style={{
+                  marginTop: "16px",
+                  padding: "12px",
+                  backgroundColor: "rgba(16, 185, 129, 0.2)",
+                  borderRadius: "8px",
+                }}
+              >
+                <Text
+                  strong
+                  style={{
+                    color: "white",
+                    display: "block",
+                    marginBottom: "8px",
+                  }}
+                >
+                  ✓ Background Removed Successfully!
+                </Text>
+                <Button
+                  type="primary"
+                  onClick={downloadRemovedBg}
+                  icon={<Download style={{ width: "16px", height: "16px" }} />}
+                  style={{
+                    width: "100%",
+                    backgroundColor: "#10b981",
+                    borderColor: "#10b981",
+                  }}
+                >
+                  Download Transparent PNG
+                </Button>
+              </div>
+            )}
+          </div>
 
-                  {removedBgImage && (
-                    <div
-                      style={{
-                        marginTop: "16px",
-                        padding: "12px",
-                        backgroundColor: "rgba(16, 185, 129, 0.2)",
-                        borderRadius: "8px",
-                      }}
-                    >
-                      <Text
-                        strong
-                        style={{
-                          color: "white",
-                          display: "block",
-                          marginBottom: "8px",
-                        }}
-                      >
-                        ✓ Background Removed Successfully!
-                      </Text>
-                      <Button
-                        type="primary"
-                        onClick={downloadRemovedBg}
-                        icon={
-                          <Download style={{ width: "16px", height: "16px" }} />
-                        }
-                        style={{
-                          width: "100%",
-                          backgroundColor: "#10b981",
-                          borderColor: "#10b981",
-                        }}
-                      >
-                        Download Transparent PNG
-                      </Button>
-                    </div>
-                  )}
+          {transparentImageSrc && (
+            <div className={styles.removeBackgroundContainer}>
+              <div>
+                <Text strong className={styles.removeBackgroundText}>
+                  Export with transparent background
+                </Text>
+                <br />
+                <Text type="secondary" style={{ fontSize: "12px" }}>
+                  Enable to remove the background color
+                </Text>
+              </div>
+              <Switch
+                checked={removeBackground}
+                onChange={setRemoveBackground}
+              />
+            </div>
+          )}
+
+          {!removeBackground && (
+            <>
+              <div className={styles.colorSection}>
+                <Text strong className={styles.colorLabel}>
+                  {transparentImageSrc
+                    ? "Custom Background Color"
+                    : "Background Color"}
+                </Text>
+                <div className={styles.colorInputGroup}>
+                  <Input
+                    type="color"
+                    value={backgroundColor}
+                    onChange={(e) => setBackgroundColor(e.target.value)}
+                    className={styles.colorPicker}
+                  />
+                  <Input
+                    type="text"
+                    value={backgroundColor}
+                    onChange={(e) => setBackgroundColor(e.target.value)}
+                    placeholder="#ffffff"
+                    className={styles.colorTextInput}
+                  />
                 </div>
-
-                {removedBgImage && (
-                  <div className={styles.removeBackgroundContainer}>
-                    <div>
-                      <Text strong className={styles.removeBackgroundText}>
-                        Show with transparent background
-                      </Text>
-                      <br />
-                      <Text type="secondary" style={{ fontSize: "12px" }}>
-                        Toggle off to preview with custom color
-                      </Text>
-                    </div>
-                    <Switch
-                      checked={removeBackground}
-                      onChange={setRemoveBackground}
-                    />
-                  </div>
-                )}
-
-                {!removedBgImage && (
-                  <div className={styles.removeBackgroundContainer}>
-                    <div>
-                      <Text strong className={styles.removeBackgroundText}>
-                        Export with transparent background
-                      </Text>
-                      <br />
-                      <Text type="secondary" style={{ fontSize: "12px" }}>
-                        For images with transparency (PNG files)
-                      </Text>
-                    </div>
-                    <Switch
-                      checked={removeBackground}
-                      onChange={setRemoveBackground}
-                    />
-                  </div>
-                )}
-
-                {!removeBackground && (
-                  <div className={styles.colorSection}>
-                    <Text strong className={styles.colorLabel}>
-                      {removedBgImage
-                        ? "Custom Background Color"
-                        : "Background Color"}
-                    </Text>
-                    <div className={styles.colorInputGroup}>
-                      <Input
-                        type="color"
-                        value={backgroundColor}
-                        onChange={(e) => setBackgroundColor(e.target.value)}
-                        className={styles.colorPicker}
-                      />
-                      <Input
-                        type="text"
-                        value={backgroundColor}
-                        onChange={(e) => setBackgroundColor(e.target.value)}
-                        placeholder="#ffffff"
-                        className={styles.colorTextInput}
-                      />
-                    </div>
-                    {removedBgImage && (
-                      <Text
-                        type="secondary"
-                        style={{
-                          fontSize: "11px",
-                          marginTop: "8px",
-                          display: "block",
-                        }}
-                      >
-                        Preview updates in real-time. Download to save with this
-                        background.
-                      </Text>
-                    )}
-                  </div>
-                )}
-
-                {!removeBackground && (
-                  <div className={styles.quickColorsSection}>
-                    <Text strong className={styles.quickColorsTitle}>
-                      Quick Colors
-                    </Text>
-                    <div className={styles.quickColorsGrid}>
-                      {[
-                        "#ffffff",
-                        "#000000",
-                        "#f3f4f6",
-                        "#3b82f6",
-                        "#ef4444",
-                        "#10b981",
-                        "#f59e0b",
-                        "#8b5cf6",
-                      ].map((color) => (
-                        <button
-                          key={color}
-                          onClick={() => {
-                            setBackgroundColor(color);
-                            setRemoveBackground(false);
-                          }}
-                          className={styles.colorButton}
-                          style={{ backgroundColor: color }}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {removedBgImage ? (
-                  <Button
-                    type="primary"
-                    onClick={downloadWithBackground}
-                    className={styles.downloadButton}
-                    size="large"
-                    icon={
-                      <Download style={{ width: "16px", height: "16px" }} />
-                    }
+                {transparentImageSrc && (
+                  <Text
+                    type="secondary"
+                    style={{
+                      fontSize: "11px",
+                      marginTop: "8px",
+                      display: "block",
+                    }}
                   >
-                    Download with Custom Background
-                  </Button>
-                ) : (
-                  <Button
-                    type="primary"
-                    onClick={changeBackground}
-                    className={styles.downloadButton}
-                    size="large"
-                    loading={isDownloading}
-                    icon={
-                      <Download style={{ width: "16px", height: "16px" }} />
-                    }
-                  >
-                    Download with New Background
-                  </Button>
+                    Preview updates in real-time. Download to save with this
+                    background.
+                  </Text>
                 )}
+              </div>
+              <div className={styles.quickColorsSection}>
+                <Text strong className={styles.quickColorsTitle}>
+                  Quick Colors
+                </Text>
+                <div className={styles.quickColorsGrid}>
+                  {[
+                    "#ffffff",
+                    "#000000",
+                    "#f3f4f6",
+                    "#3b82f6",
+                    "#ef4444",
+                    "#10b981",
+                    "#f59e0b",
+                    "#8b5cf6",
+                  ].map((color) => (
+                    <button
+                      key={color}
+                      onClick={() => {
+                        setBackgroundColor(color);
+                        setRemoveBackground(false);
+                      }}
+                      className={styles.colorButton}
+                      style={{ backgroundColor: color }}
+                    />
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+
+          <Button
+            type="primary"
+            onClick={downloadWithBackground}
+            className={styles.downloadButton}
+            size="large"
+            icon={<Download style={{ width: "16px", height: "16px" }} />}
+          >
+            Download with Custom Background
+          </Button>
         </div>
       </div>
     </div>

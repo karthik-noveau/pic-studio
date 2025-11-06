@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import Sidebar from "../../components/Sidebar";
-import PreviewPanel from "../../components/PreviewPanel";
-import ConfigPanel from "../../components/ConfigPanel";
+import Sidebar from "../../components/sidebar";
+import PreviewPanel from "../../components/preview-panel";
+import ConfigPanel from "../../components/config-panel";
 import styles from "./style.module.css";
 
 export default function Studio({
@@ -65,6 +65,8 @@ export default function Studio({
   compressedImageSrc,
   compressedSize,
   compressionRatio,
+  transparentImageSrc, // New prop
+  setTransparentImageSrc, // New prop
 }) {
   const [activeTool, setActiveTool] = useState("analysis");
 
@@ -165,6 +167,8 @@ export default function Studio({
         revertFormat={revertFormat}
         copyToClipboard={copyToClipboard}
         copied={copied}
+        transparentImageSrc={transparentImageSrc} // Pass transparentImageSrc
+        setTransparentImageSrc={setTransparentImageSrc} // Pass setTransparentImageSrc
       />
     </div>
   );

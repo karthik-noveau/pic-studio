@@ -42,7 +42,7 @@ import {
   simplifyRatio,
   getCommonRatioName,
 } from "../common/formatters";
-import { debounce } from "../common/helpers";
+import { debounce } from "../common/utils/helpers";
 
 // Import tab components
 import UploadTab from "./upload";

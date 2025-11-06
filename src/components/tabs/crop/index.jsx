@@ -550,7 +550,7 @@ export default function CropTab({
                   loading={isDownloading}
                   icon={<Download className={styles.icon} />}
                 >
-                  Download Cropped Image
+                  Apply Crop
                   <div className={styles.downloadSize}>
                     ({Math.round(cropArea.width)}×{Math.round(cropArea.height)})
                   </div>

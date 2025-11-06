@@ -2,14 +2,14 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import { App as AntdApp, ConfigProvider, message } from "antd";
 import { antdTheme } from "./theme/antd-theme";
 import Home from "./pages/Home";
-import Studio from "./pages/Studio";
+import Studio from "./pages/studio";
 
 // Import utilities and constants
 import { faviconSizes, imageFormats } from "./common";
-import { commonAspectRatios } from "./common/aspectRatios";
-import { analyzeImage, getImageFormat } from "./common/imageAnalysis";
-import { formatFileSize, simplifyRatio } from "./common/formatters";
-import { debounce } from "./common/helpers";
+import { commonAspectRatios } from "./common/constants/aspect-ratios";
+import { analyzeImage, getImageFormat } from "./common/utils/image-analysis";
+import { formatFileSize, simplifyRatio } from "./common/utils/formatters";
+import { debounce } from "./common/utils/helpers";
 
 function App() {
   const [currentPage, setCurrentPage] = useState("home");
@@ -74,6 +74,7 @@ function App() {
 
   // Computed processed image with all cumulative transformations
   const [processedImageSrc, setProcessedImageSrc] = useState(null);
+  const [transparentImageSrc, setTransparentImageSrc] = useState(null); // New state for background-removed image
 
   // Compressed image preview for comparison slider
   const [compressedImageSrc, setCompressedImageSrc] = useState(null);
@@ -90,24 +91,30 @@ function App() {
 
   // Effect to load settings when active image changes
   useEffect(() => {
-    const currentImage = images[activeImageIndex];
-    if (currentImage && currentImage.settings) {
+    if (imageData && imageData.settings) {
       isLoadingSettings.current = true;
-      setCropArea(currentImage.settings.cropArea);
-      setRotation(currentImage.settings.rotation);
-      setCornerRadius(currentImage.settings.cornerRadius);
-      setBackgroundColor(currentImage.settings.backgroundColor);
-      setRemoveBackground(currentImage.settings.removeBackground);
-      setCompressionQuality(currentImage.settings.compressionQuality);
-      setSelectedFormat(currentImage.settings.selectedFormat);
-      setConversionQuality(currentImage.settings.conversionQuality);
+      setCropArea(imageData.settings.cropArea);
+      setBackgroundColor(imageData.settings.backgroundColor);
+      setRemoveBackground(imageData.settings.removeBackground);
+      setRotation(imageData.settings.rotation);
+      setCornerRadius(imageData.settings.cornerRadius);
+      setCompressionQuality(imageData.settings.compressionQuality);
+      setSelectedFormat(imageData.settings.selectedFormat);
+      setConversionQuality(imageData.settings.conversionQuality);
+      setTransparentImageSrc(imageData.settings.transparentImageSrc || null); // Load transparent image src
       // Reset flag after state updates have been processed
       setTimeout(() => {
         isLoadingSettings.current = false;
       }, 0);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeImageIndex]);
+  }, [imageData]);
+
+  useEffect(() => {
+    if (imageData) {
+      setCropArea({ x: 0, y: 0, width: imageData.width, height: imageData.height });
+    }
+  }, [imageData?.width, imageData?.height]);
 
   // Redraw canvas when active image changes
   useEffect(() => {
@@ -149,6 +156,7 @@ function App() {
                 compressionQuality,
                 selectedFormat,
                 conversionQuality,
+                transparentImageSrc, // Save transparent image src
               },
             };
           }
@@ -165,6 +173,7 @@ function App() {
     compressionQuality,
     selectedFormat,
     conversionQuality,
+    transparentImageSrc, // Add transparentImageSrc to dependencies
     activeImageIndex,
   ]);
 
@@ -194,7 +203,8 @@ function App() {
 
     const backgroundChanged =
       backgroundColor !== defaultSettings.backgroundColor ||
-      removeBackground !== defaultSettings.removeBackground;
+      removeBackground !== defaultSettings.removeBackground ||
+      transparentImageSrc !== null; // Consider transparentImageSrc as a change
 
     const compressionChanged =
       compressionQuality !== defaultSettings.compressionQuality;
@@ -242,136 +252,166 @@ function App() {
 
   // Generate processed image with cumulative transformations
   useEffect(() => {
-    if (!imageData || !canvasRef.current) {
-      setProcessedImageSrc(null);
-      return;
-    }
-
-    const hasTransformations =
-      masterSettings.applyCrop ||
-      masterSettings.applyRotation ||
-      masterSettings.applyBackground ||
-      masterSettings.applyBorderRadius;
-
-    if (!hasTransformations) {
-      setProcessedImageSrc(imageData.src);
-      return;
-    }
-
-    const canvas = canvasRef.current;
-    let workingCanvas = document.createElement("canvas");
-    let workingCtx = workingCanvas.getContext("2d");
-
-    if (!workingCtx) {
-      setProcessedImageSrc(imageData.src);
-      return;
-    }
-
-    try {
-      workingCanvas.width = canvas.width;
-      workingCanvas.height = canvas.height;
-      workingCtx.drawImage(canvas, 0, 0);
-
-      if (masterSettings.applyCrop) {
-        const croppedCanvas = document.createElement("canvas");
-        const croppedCtx = croppedCanvas.getContext("2d");
-        if (croppedCtx) {
-          croppedCanvas.width = cropArea.width;
-          croppedCanvas.height = cropArea.height;
-          croppedCtx.imageSmoothingEnabled = true;
-          croppedCtx.imageSmoothingQuality = "high";
-          croppedCtx.drawImage(
-            workingCanvas,
-            cropArea.x,
-            cropArea.y,
-            cropArea.width,
-            cropArea.height,
-            0,
-            0,
-            cropArea.width,
-            cropArea.height
-          );
-          workingCanvas = croppedCanvas;
-          workingCtx = croppedCtx;
-        }
+    const generateProcessedImage = async () => {
+      if (!imageData || !canvasRef.current) {
+        setProcessedImageSrc(null);
+        return;
       }
 
-      if (masterSettings.applyRotation && rotation !== 0) {
-        const rotatedCanvas = document.createElement("canvas");
-        const rotatedCtx = rotatedCanvas.getContext("2d");
-        if (rotatedCtx) {
-          const angle = (rotation * Math.PI) / 180;
-          const cos = Math.abs(Math.cos(angle));
-          const sin = Math.abs(Math.sin(angle));
-          rotatedCanvas.width = workingCanvas.width * cos + workingCanvas.height * sin;
-          rotatedCanvas.height = workingCanvas.width * sin + workingCanvas.height * cos;
-          rotatedCtx.translate(rotatedCanvas.width / 2, rotatedCanvas.height / 2);
-          rotatedCtx.rotate(angle);
-          rotatedCtx.drawImage(workingCanvas, -workingCanvas.width / 2, -workingCanvas.height / 2);
-          workingCanvas = rotatedCanvas;
-          workingCtx = rotatedCtx;
-        }
+      const hasTransformations =
+        masterSettings.applyCrop ||
+        masterSettings.applyRotation ||
+        (masterSettings.applyBackground && !removeBackground) || // Only apply background if not removing
+        masterSettings.applyBorderRadius ||
+        (removeBackground && transparentImageSrc); // Consider transparent image as a transformation
+
+      // Determine the base image source for processing
+      let baseImageSource = imageData.src;
+      if (transparentImageSrc) {
+        baseImageSource = transparentImageSrc;
       }
 
-      if (masterSettings.applyBackground) {
-        const bgCanvas = document.createElement("canvas");
-        const bgCtx = bgCanvas.getContext("2d");
-        if (bgCtx) {
-          bgCanvas.width = workingCanvas.width;
-          bgCanvas.height = workingCanvas.height;
-          if (!removeBackground) {
+      if (!hasTransformations && baseImageSource === imageData.src) {
+        setProcessedImageSrc(imageData.src);
+        return;
+      }
+      if (!hasTransformations && baseImageSource === transparentImageSrc) {
+        setProcessedImageSrc(transparentImageSrc);
+        return;
+      }
+
+      const canvas = canvasRef.current;
+      let workingCanvas = document.createElement("canvas");
+      let workingCtx = workingCanvas.getContext("2d");
+
+      if (!workingCtx) {
+        setProcessedImageSrc(imageData.src);
+        return;
+      }
+
+      try {
+        const img = new Image();
+        img.src = baseImageSource;
+        await new Promise((resolve, reject) => {
+          img.onload = resolve;
+          img.onerror = reject;
+        });
+
+        workingCanvas.width = img.naturalWidth;
+        workingCanvas.height = img.naturalHeight;
+        workingCtx.clearRect(0, 0, workingCanvas.width, workingCanvas.height);
+        workingCtx.drawImage(img, 0, 0);
+
+        // Apply crop if enabled
+        if (masterSettings.applyCrop) {
+          const croppedCanvas = document.createElement("canvas");
+          const croppedCtx = croppedCanvas.getContext("2d");
+          if (croppedCtx) {
+            const finalWidth = Math.round(cropArea.width);
+            const finalHeight = Math.round(cropArea.height);
+
+            croppedCanvas.width = finalWidth;
+            croppedCanvas.height = finalHeight;
+            croppedCtx.imageSmoothingEnabled = true;
+            croppedCtx.imageSmoothingQuality = "high";
+
+            croppedCtx.drawImage(
+              workingCanvas,
+              cropArea.x,
+              cropArea.y,
+              cropArea.width,
+              cropArea.height,
+              0,
+              0,
+              finalWidth,
+              finalHeight
+            );
+
+            workingCanvas = croppedCanvas;
+            workingCtx = croppedCtx;
+          }
+        }
+
+        // Apply rotation if enabled
+        if (masterSettings.applyRotation && rotation !== 0) {
+          const rotatedCanvas = document.createElement("canvas");
+          const rotatedCtx = rotatedCanvas.getContext("2d");
+          if (rotatedCtx) {
+            const angle = (rotation * Math.PI) / 180;
+            const cos = Math.abs(Math.cos(angle));
+            const sin = Math.abs(Math.sin(angle));
+            rotatedCanvas.width = workingCanvas.width * cos + workingCanvas.height * sin;
+            rotatedCanvas.height = workingCanvas.width * sin + workingCanvas.height * cos;
+            rotatedCtx.translate(rotatedCanvas.width / 2, rotatedCanvas.height / 2);
+            rotatedCtx.rotate(angle);
+            rotatedCtx.drawImage(workingCanvas, -workingCanvas.width / 2, -workingCanvas.height / 2);
+            workingCanvas = rotatedCanvas;
+            workingCtx = rotatedCtx;
+          }
+        }
+
+        // Apply background color if enabled
+        if (masterSettings.applyBackground && !removeBackground) {
+          const bgCanvas = document.createElement("canvas");
+          const bgCtx = bgCanvas.getContext("2d");
+          if (bgCtx) {
+            bgCanvas.width = workingCanvas.width;
+            bgCanvas.height = workingCanvas.height;
             bgCtx.fillStyle = backgroundColor;
             bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
+            bgCtx.drawImage(workingCanvas, 0, 0);
+            workingCanvas = bgCanvas;
+            workingCtx = bgCtx;
           }
-          bgCtx.drawImage(workingCanvas, 0, 0);
-          workingCanvas = bgCanvas;
-          workingCtx = bgCtx;
         }
-      }
 
-      if (masterSettings.applyBorderRadius) {
-        const radiusCanvas = document.createElement("canvas");
-        const radiusCtx = radiusCanvas.getContext("2d");
-        if (radiusCtx) {
-          radiusCanvas.width = workingCanvas.width;
-          radiusCanvas.height = workingCanvas.height;
-          const { topLeft, topRight, bottomLeft, bottomRight } = cornerRadius;
-          const maxRadius = Math.min(workingCanvas.width, workingCanvas.height) * 0.5;
-          const tl = (topLeft / 100) * maxRadius;
-          const tr = (topRight / 100) * maxRadius;
-          const bl = (bottomLeft / 100) * maxRadius;
-          const br = (bottomRight / 100) * maxRadius;
+        // Apply border radius if enabled
+        if (masterSettings.applyBorderRadius) {
+          const radiusCanvas = document.createElement("canvas");
+          const radiusCtx = radiusCanvas.getContext("2d");
+          if (radiusCtx) {
+            radiusCanvas.width = workingCanvas.width;
+            radiusCanvas.height = workingCanvas.height;
+            const { topLeft, topRight, bottomLeft, bottomRight } = cornerRadius;
+            const maxRadius = Math.min(workingCanvas.width, workingCanvas.height) * 0.5;
+            const tl = (topLeft / 100) * maxRadius;
+            const tr = (topRight / 100) * maxRadius;
+            const bl = (bottomLeft / 100) * maxRadius;
+            const br = (bottomRight / 100) * maxRadius;
 
-          radiusCtx.beginPath();
-          radiusCtx.moveTo(tl, 0);
-          radiusCtx.lineTo(workingCanvas.width - tr, 0);
-          radiusCtx.quadraticCurveTo(workingCanvas.width, 0, workingCanvas.width, tr);
-          radiusCtx.lineTo(workingCanvas.width, workingCanvas.height - br);
-          radiusCtx.quadraticCurveTo(
-            workingCanvas.width,
-            workingCanvas.height,
-            workingCanvas.width - br,
-            workingCanvas.height
-          );
-          radiusCtx.lineTo(bl, workingCanvas.height);
-          radiusCtx.quadraticCurveTo(0, workingCanvas.height, 0, workingCanvas.height - bl);
-          radiusCtx.lineTo(0, tl);
-          radiusCtx.quadraticCurveTo(0, 0, tl, 0);
-          radiusCtx.closePath();
-          radiusCtx.clip();
-          radiusCtx.drawImage(workingCanvas, 0, 0);
-          workingCanvas = radiusCanvas;
-          workingCtx = radiusCtx;
+            radiusCtx.beginPath();
+            radiusCtx.moveTo(tl, 0);
+            radiusCtx.lineTo(workingCanvas.width - tr, 0);
+            radiusCtx.quadraticCurveTo(workingCanvas.width, 0, workingCanvas.width, tr);
+            radiusCtx.lineTo(workingCanvas.width, workingCanvas.height - br);
+            radiusCtx.quadraticCurveTo(
+              workingCanvas.width,
+              workingCanvas.height,
+              workingCanvas.width - br,
+              workingCanvas.height
+            );
+            radiusCtx.lineTo(bl, workingCanvas.height);
+            radiusCtx.quadraticCurveTo(0, workingCanvas.height, 0, workingCanvas.height - bl);
+            radiusCtx.lineTo(0, tl);
+            radiusCtx.quadraticCurveTo(0, 0, tl, 0);
+            radiusCtx.closePath();
+            radiusCtx.clip();
+            radiusCtx.drawImage(workingCanvas, 0, 0);
+            workingCanvas = radiusCanvas;
+            workingCtx = radiusCtx;
+          }
         }
-      }
 
-      const dataUrl = workingCanvas.toDataURL("image/png");
-      setProcessedImageSrc(dataUrl);
-    } catch (error) {
-      console.error("Error generating processed image:", error);
-      setProcessedImageSrc(imageData.src);
-    }
-  }, [imageData, masterSettings, cropArea, rotation, backgroundColor, removeBackground, cornerRadius]);
+        const dataUrl = workingCanvas.toDataURL("image/png");
+        setProcessedImageSrc(dataUrl);
+      } catch (error) {
+        console.error("Error generating processed image:", error);
+        setProcessedImageSrc(imageData.src);
+      }
+    };
+
+    generateProcessedImage();
+  }, [imageData, masterSettings, cropArea, rotation, backgroundColor, removeBackground, cornerRadius, transparentImageSrc]); // Add transparentImageSrc to dependencies
 
   // Generate compressed image preview for comparison slider
   useEffect(() => {
@@ -455,6 +495,7 @@ function App() {
 
       const newImage = {
         id: Date.now() + Math.random(),
+        originalSrc: src, // Store the original source
         src,
         width,
         height,
@@ -474,6 +515,7 @@ function App() {
           compressionQuality: 80,
           selectedFormat: "jpeg",
           conversionQuality: 85,
+          transparentImageSrc: null, // Initialize transparentImageSrc
         },
       };
 
@@ -506,6 +548,7 @@ function App() {
   const revertBackground = useCallback(() => {
     setBackgroundColor(defaultSettings.backgroundColor);
     setRemoveBackground(defaultSettings.removeBackground);
+    setTransparentImageSrc(null); // Clear transparent image on revert
     message.success("Background settings reverted");
   }, [defaultSettings]);
 
@@ -533,142 +576,34 @@ function App() {
     let workingCtx = workingCanvas.getContext("2d");
     if (!workingCtx) return null;
 
-    workingCanvas.width = canvas.width;
-    workingCanvas.height = canvas.height;
-    workingCtx.drawImage(canvas, 0, 0);
-
-    if (masterSettings.applyCrop) {
-      const croppedCanvas = document.createElement("canvas");
-      const croppedCtx = croppedCanvas.getContext("2d");
-      if (!croppedCtx) return null;
-
-      const finalWidth = Math.round(cropArea.width);
-      const finalHeight = Math.round(cropArea.height);
-
-      croppedCanvas.width = finalWidth;
-      croppedCanvas.height = finalHeight;
-      croppedCtx.imageSmoothingEnabled = true;
-      croppedCtx.imageSmoothingQuality = "high";
-
-      croppedCtx.drawImage(
-        workingCanvas,
-        cropArea.x,
-        cropArea.y,
-        cropArea.width,
-        cropArea.height,
-        0,
-        0,
-        finalWidth,
-        finalHeight
-      );
-
-      workingCanvas = croppedCanvas;
-      workingCtx = croppedCtx;
+    // Determine the base image source for processing
+    let baseImageSource = imageData.src;
+    if (removeBackground && transparentImageSrc) {
+      baseImageSource = transparentImageSrc;
     }
 
-    if (masterSettings.applyRotation && rotation !== 0) {
-      const rotatedCanvas = document.createElement("canvas");
-      const rotatedCtx = rotatedCanvas.getContext("2d");
-      if (!rotatedCtx) return null;
+    const img = new Image();
+    img.src = baseImageSource;
+    img.onload = () => {
+      workingCanvas.width = img.naturalWidth;
+      workingCanvas.height = img.naturalHeight;
+      workingCtx.drawImage(img, 0, 0);
 
-      const angle = (rotation * Math.PI) / 180;
-      const cos = Math.abs(Math.cos(angle));
-      const sin = Math.abs(Math.sin(angle));
-
-      rotatedCanvas.width = workingCanvas.width * cos + workingCanvas.height * sin;
-      rotatedCanvas.height = workingCanvas.width * sin + workingCanvas.height * cos;
-
-      rotatedCtx.translate(rotatedCanvas.width / 2, rotatedCanvas.height / 2);
-      rotatedCtx.rotate(angle);
-      rotatedCtx.drawImage(workingCanvas, -workingCanvas.width / 2, -workingCanvas.height / 2);
-
-      workingCanvas = rotatedCanvas;
-      workingCtx = rotatedCtx;
-    }
-
-    if (masterSettings.applyBackground) {
-      const bgCanvas = document.createElement("canvas");
-      const bgCtx = bgCanvas.getContext("2d");
-      if (!bgCtx) return null;
-
-      bgCanvas.width = workingCanvas.width;
-      bgCanvas.height = workingCanvas.height;
-
-      if (!removeBackground) {
-        bgCtx.fillStyle = backgroundColor;
-        bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
-      }
-
-      bgCtx.drawImage(workingCanvas, 0, 0);
-      workingCanvas = bgCanvas;
-      workingCtx = bgCtx;
-    }
-
-    if (masterSettings.applyBorderRadius) {
-      const radiusCanvas = document.createElement("canvas");
-      const radiusCtx = radiusCanvas.getContext("2d");
-      if (!radiusCtx) return null;
-
-      radiusCanvas.width = workingCanvas.width;
-      radiusCanvas.height = workingCanvas.height;
-
-      const { topLeft, topRight, bottomLeft, bottomRight } = cornerRadius;
-      const maxRadius = Math.min(workingCanvas.width, workingCanvas.height) * 0.5;
-
-      const tl = (topLeft / 100) * maxRadius;
-      const tr = (topRight / 100) * maxRadius;
-      const bl = (bottomLeft / 100) * maxRadius;
-      const br = (bottomRight / 100) * maxRadius;
-
-      radiusCtx.beginPath();
-      radiusCtx.moveTo(tl, 0);
-      radiusCtx.lineTo(workingCanvas.width - tr, 0);
-      radiusCtx.quadraticCurveTo(workingCanvas.width, 0, workingCanvas.width, tr);
-      radiusCtx.lineTo(workingCanvas.width, workingCanvas.height - br);
-      radiusCtx.quadraticCurveTo(
-        workingCanvas.width,
-        workingCanvas.height,
-        workingCanvas.width - br,
-        workingCanvas.height
-      );
-      radiusCtx.lineTo(bl, workingCanvas.height);
-      radiusCtx.quadraticCurveTo(0, workingCanvas.height, 0, workingCanvas.height - bl);
-      radiusCtx.lineTo(0, tl);
-      radiusCtx.quadraticCurveTo(0, 0, tl, 0);
-      radiusCtx.closePath();
-      radiusCtx.clip();
-
-      radiusCtx.drawImage(workingCanvas, 0, 0);
-      workingCanvas = radiusCanvas;
-      workingCtx = radiusCtx;
-    }
-
-    return workingCanvas;
-  }, [imageData, masterSettings, cropArea, backgroundColor, removeBackground, cornerRadius, rotation]);
-
-  const applyCrop = useCallback(() => {
-    if (!imageData || !canvasRef.current || !cropCanvasRef.current) return;
-
-    setIsDownloading(true);
-
-    setTimeout(() => {
-      try {
-        const canvas = canvasRef.current;
-        const cropCanvas = cropCanvasRef.current;
-        const ctx = cropCanvas.getContext("2d");
-        if (!ctx) return;
+      if (masterSettings.applyCrop) {
+        const croppedCanvas = document.createElement("canvas");
+        const croppedCtx = croppedCanvas.getContext("2d");
+        if (!croppedCtx) return null;
 
         const finalWidth = Math.round(cropArea.width);
         const finalHeight = Math.round(cropArea.height);
 
-        cropCanvas.width = finalWidth;
-        cropCanvas.height = finalHeight;
+        croppedCanvas.width = finalWidth;
+        croppedCanvas.height = finalHeight;
+        croppedCtx.imageSmoothingEnabled = true;
+        croppedCtx.imageSmoothingQuality = "high";
 
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = "high";
-
-        ctx.drawImage(
-          canvas,
+        croppedCtx.drawImage(
+          workingCanvas,
           cropArea.x,
           cropArea.y,
           cropArea.width,
@@ -679,18 +614,146 @@ function App() {
           finalHeight
         );
 
-        const croppedDataUrl = cropCanvas.toDataURL("image/png");
-        downloadImage(
-          croppedDataUrl,
-          `cropped-${finalWidth}x${finalHeight}-${imageData.fileName || "image"}.png`
-        );
-
-        message.success(`Image cropped successfully. Downloaded ${finalWidth}×${finalHeight}px cropped image.`);
-      } finally {
-        setIsDownloading(false);
+        workingCanvas = croppedCanvas;
+        workingCtx = croppedCtx;
       }
-    }, 100);
-  }, [imageData, cropArea]);
+
+      if (masterSettings.applyRotation && rotation !== 0) {
+        const rotatedCanvas = document.createElement("canvas");
+        const rotatedCtx = rotatedCanvas.getContext("2d");
+        if (!rotatedCtx) return null;
+
+        const angle = (rotation * Math.PI) / 180;
+        const cos = Math.abs(Math.cos(angle));
+        const sin = Math.abs(Math.sin(angle));
+        rotatedCanvas.width = workingCanvas.width * cos + workingCanvas.height * sin;
+        rotatedCanvas.height = workingCanvas.width * sin + workingCanvas.height * cos;
+        rotatedCtx.translate(rotatedCanvas.width / 2, rotatedCanvas.height / 2);
+        rotatedCtx.rotate(angle);
+        rotatedCtx.drawImage(workingCanvas, -workingCanvas.width / 2, -workingCanvas.height / 2);
+        workingCanvas = rotatedCanvas;
+        workingCtx = rotatedCtx;
+      }
+
+      // Apply background color if enabled and not removing background
+      if (masterSettings.applyBackground && !removeBackground) {
+        const bgCanvas = document.createElement("canvas");
+        const bgCtx = bgCanvas.getContext("2d");
+        if (!bgCtx) return null;
+
+        bgCanvas.width = workingCanvas.width;
+        bgCanvas.height = workingCanvas.height;
+        bgCtx.fillStyle = backgroundColor;
+        bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
+        bgCtx.drawImage(workingCanvas, 0, 0);
+        workingCanvas = bgCanvas;
+        workingCtx = bgCtx;
+      }
+
+      if (masterSettings.applyBorderRadius) {
+        const radiusCanvas = document.createElement("canvas");
+        const radiusCtx = radiusCanvas.getContext("2d");
+        if (!radiusCtx) return null;
+
+        radiusCanvas.width = workingCanvas.width;
+        radiusCanvas.height = workingCanvas.height;
+
+        const { topLeft, topRight, bottomLeft, bottomRight } = cornerRadius;
+        const maxRadius = Math.min(workingCanvas.width, workingCanvas.height) * 0.5;
+
+        const tl = (topLeft / 100) * maxRadius;
+        const tr = (topRight / 100) * maxRadius;
+        const bl = (bottomLeft / 100) * maxRadius;
+        const br = (bottomRight / 100) * maxRadius;
+
+        radiusCtx.beginPath();
+        radiusCtx.moveTo(tl, 0);
+        radiusCtx.lineTo(workingCanvas.width - tr, 0);
+        radiusCtx.quadraticCurveTo(workingCanvas.width, 0, workingCanvas.width, tr);
+        radiusCtx.lineTo(workingCanvas.width, workingCanvas.height - br);
+        radiusCtx.quadraticCurveTo(
+          workingCanvas.width,
+          workingCanvas.height,
+          workingCanvas.width - br,
+          workingCanvas.height
+        );
+        radiusCtx.lineTo(bl, workingCanvas.height);
+        radiusCtx.quadraticCurveTo(0, workingCanvas.height, 0, workingCanvas.height - bl);
+        radiusCtx.lineTo(0, tl);
+        radiusCtx.quadraticCurveTo(0, 0, tl, 0);
+        radiusCtx.closePath();
+        radiusCtx.clip();
+        radiusCtx.drawImage(workingCanvas, 0, 0);
+        workingCanvas = radiusCanvas;
+        workingCtx = radiusCtx;
+      }
+    };
+
+    return workingCanvas;
+  }, [imageData, masterSettings, cropArea, backgroundColor, removeBackground, cornerRadius, rotation, transparentImageSrc]); // Add transparentImageSrc to dependencies
+
+  const applyCrop = useCallback(() => {
+    if (!imageData || !canvasRef.current || !cropCanvasRef.current) return;
+
+    const originalImage = new Image();
+    originalImage.src = imageData.originalSrc || imageData.src; // Fallback to src for older data
+
+    originalImage.onload = () => {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      canvas.width = originalImage.naturalWidth;
+      canvas.height = originalImage.naturalHeight;
+      ctx.drawImage(originalImage, 0, 0);
+
+      const cropCanvas = cropCanvasRef.current;
+      const cropCtx = cropCanvas.getContext("2d");
+      if (!cropCtx) return;
+
+      const finalWidth = Math.round(cropArea.width);
+      const finalHeight = Math.round(cropArea.height);
+
+      cropCanvas.width = finalWidth;
+      cropCanvas.height = finalHeight;
+
+      cropCtx.imageSmoothingEnabled = true;
+      cropCtx.imageSmoothingQuality = "high";
+
+      cropCtx.drawImage(
+        canvas,
+        cropArea.x,
+        cropArea.y,
+        cropArea.width,
+        cropArea.height,
+        0,
+        0,
+        finalWidth,
+        finalHeight
+      );
+
+      const croppedDataUrl = cropCanvas.toDataURL("image/png");
+
+      const newImages = [...images];
+      const newImageData = {
+        ...newImages[activeImageIndex],
+        src: croppedDataUrl,
+        width: finalWidth,
+        height: finalHeight,
+        fileSize: croppedDataUrl.length,
+        settings: {
+          ...newImages[activeImageIndex].settings,
+          cropArea: { x: 0, y: 0, width: finalWidth, height: finalHeight },
+        },
+      };
+      newImages[activeImageIndex] = newImageData;
+
+      setImages(newImages);
+      setProcessedImageSrc(croppedDataUrl);
+
+      message.success(`Image cropped successfully.`);
+    };
+  }, [imageData, cropArea, images, activeImageIndex]);
 
   const generateFavicons = useCallback(() => {
     setIsDownloading(true);
@@ -798,24 +861,35 @@ function App() {
         previewCanvas.width = canvas.width;
         previewCanvas.height = canvas.height;
 
-        if (!removeBackground) {
-          ctx.fillStyle = backgroundColor;
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
-        }
+        // Use transparentImageSrc if background is removed, otherwise use original
+        const imageToDraw = new Image();
+        imageToDraw.src = (removeBackground && transparentImageSrc) ? transparentImageSrc : imageData.src;
 
-        ctx.drawImage(canvas, 0, 0);
+        imageToDraw.onload = () => {
+          // Always fill background if masterSettings.applyBackground is true
+          if (masterSettings.applyBackground) {
+            ctx.fillStyle = backgroundColor;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+          }
 
-        const format = removeBackground ? "image/png" : "image/jpeg";
-        const dataUrl = previewCanvas.toDataURL(format, 0.9);
-        const extension = removeBackground ? "png" : "jpg";
-        downloadImage(dataUrl, `background-changed-${imageData.fileName || "image"}.${extension}`);
+          ctx.drawImage(imageToDraw, 0, 0);
 
-        message.success("Background changed successfully.");
+          const format = (removeBackground && transparentImageSrc) ? "image/png" : "image/jpeg";
+          const extension = (removeBackground && transparentImageSrc) ? "png" : "jpg";
+          const dataUrl = previewCanvas.toDataURL(format, 0.9);
+          downloadImage(dataUrl, `background-changed-${imageData.fileName || "image"}.${extension}`);
+
+          message.success("Background changed successfully.");
+        };
+        imageToDraw.onerror = (err) => {
+          console.error("Error loading image for background change:", err);
+          message.error("Failed to load image for background change.");
+        };
       } finally {
         setIsDownloading(false);
       }
     }, 100);
-  }, [imageData, backgroundColor, removeBackground]);
+  }, [imageData, backgroundColor, removeBackground, transparentImageSrc]);
 
   const reduceFileSize = useCallback(() => {
     if (!imageData || !canvasRef.current) return;
@@ -1019,6 +1093,8 @@ function App() {
             compressedImageSrc={compressedImageSrc}
             compressedSize={compressedSize}
             compressionRatio={compressionRatio}
+            transparentImageSrc={transparentImageSrc} // Pass transparentImageSrc
+            setTransparentImageSrc={setTransparentImageSrc} // Pass setTransparentImageSrc
           />
         )}
       </AntdApp>

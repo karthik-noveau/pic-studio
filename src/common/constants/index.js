@@ -1,3 +1,4 @@
+
 // Favicon sizes
 export const faviconSizes = [
   { size: 16, name: "16x16", description: "Browser tab" },

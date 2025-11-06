@@ -97,6 +97,8 @@ export default function ConfigPanel({
   // Analysis props
   copyToClipboard,
   copied,
+  transparentImageSrc, // New prop
+  setTransparentImageSrc, // New prop
 }) {
   const renderToolContent = () => {
     if (!imageData) {
@@ -202,6 +204,8 @@ export default function ConfigPanel({
             revertBackground={revertBackground}
             openFullscreen={openFullscreen}
             isDownloading={isDownloading}
+            transparentImageSrc={transparentImageSrc} // Pass transparentImageSrc
+            setTransparentImageSrc={setTransparentImageSrc} // Pass setTransparentImageSrc
           />
         );
       case "compress":

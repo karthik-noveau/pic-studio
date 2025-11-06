@@ -13,7 +13,7 @@ import styles from "./style.module.css";
 import {
   smartCompress,
   analyzeImageComplexity,
-} from "../../../common/advancedCompression";
+} from "../../../common/utils/advanced-compression";
 
 const { Text } = Typography;
 
