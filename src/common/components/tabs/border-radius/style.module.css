@@ -1,0 +1,141 @@
+/* Border radius tab specific styles */
+
+.container {
+  width: 100%;
+}
+
+.cardHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.cardContent {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.titleContent {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.revertButton {
+  color: #ea580c;
+  border-color: #fed7aa;
+  background-color: transparent;
+}
+
+.revertButton:hover {
+  background-color: #fff7ed;
+}
+
+.extraText {
+  font-size: 0.875rem;
+}
+
+.uniformRadiusContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background-color: #faf5ff;
+  border-radius: 0.75rem;
+}
+
+.uniformRadiusText {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #6b21a8;
+}
+
+.sliderSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sliderLabel {
+  font-size: 1rem;
+  font-weight: 500;
+  display: block;
+}
+
+.cornerGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.cornerSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cornerLabel {
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: block;
+}
+
+.presetsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.presetsTitle {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.presetsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.presetButton {
+  height: 2.5rem;
+}
+
+.downloadButton {
+  width: 100%;
+  height: 3rem;
+  background-color: #9333ea;
+}
+
+.downloadButton:hover {
+  background-color: #7e22ce;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .cardHeaderRight {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .cardContent {
+    padding: 1rem;
+  }
+
+  .cornerGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .presetsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .extraText {
+    font-size: 0.8rem;
+  }
+}

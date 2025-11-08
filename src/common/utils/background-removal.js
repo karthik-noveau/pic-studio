@@ -65,9 +65,7 @@ function blobToDataUrl(blob) {
  */
 export async function advancedRemoveBackground(imageSrc, config = {}) {
   const {
-    model = 'medium',
-    threshold = 0.5,
-    onProgress = null,
+    model = 'medium',onProgress = null,
   } = config;
 
   try {
@@ -104,6 +102,7 @@ export function isBackgroundRemovalSupported() {
       window.WebGLRenderingContext &&
       (canvas.getContext('webgl') || canvas.getContext('experimental-webgl'))
     );
+  // eslint-disable-next-line no-unused-vars
   } catch (e) {
     return false;
   }

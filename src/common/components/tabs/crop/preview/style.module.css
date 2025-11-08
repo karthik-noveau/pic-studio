@@ -1,0 +1,121 @@
+.cropContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #f0f2f5;
+}
+
+.cropImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.gridContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  pointer-events: none;
+}
+
+.gridCell {
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.handleCorner,
+.handleEdge {
+  position: absolute;
+  background-color: #3b82f6;
+  border: 1px solid white;
+  transition: background-color 150ms;
+}
+
+.handleCorner:hover,
+.handleEdge:hover {
+  background-color: #2563eb;
+}
+
+.handleCorner {
+  width: 10px;
+  height: 10px;
+}
+
+.handleNw {
+  top: -5px;
+  left: -5px;
+  cursor: nw-resize;
+}
+
+.handleNe {
+  top: -5px;
+  right: -5px;
+  cursor: ne-resize;
+}
+
+.handleSw {
+  bottom: -5px;
+  left: -5px;
+  cursor: sw-resize;
+}
+
+.handleSe {
+  bottom: -5px;
+  right: -5px;
+  cursor: se-resize;
+}
+
+.handleEdge {
+  width: 10px;
+  height: 10px;
+}
+
+.handleN {
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: n-resize;
+}
+
+.handleS {
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: s-resize;
+}
+
+.handleW {
+  left: -5px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: w-resize;
+}
+
+.handleE {
+  right: -5px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: e-resize;
+}
+
+.moveIndicator {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  color: white;
+  font-size: 12px;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 2px 5px;
+  border-radius: 3px;
+  pointer-events: none;
+}
+
+.moveIcon {
+  width: 12px;
+  height: 12px;
+}

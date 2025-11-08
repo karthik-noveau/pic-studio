@@ -1,0 +1,61 @@
+.sidebar {
+  width: 80px; /* Minimized width */
+  background: white;
+  border-right: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow-y: auto;
+  position: sticky;
+  top: 0;
+}
+
+.navItem {
+  width: 100%;
+  display: flex;
+  flex-direction: column; /* Stack icon and label vertically */
+  align-items: center;
+  justify-content: center; /* Center content */
+  padding: 1rem 0.25rem; /* Adjusted padding */
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  text-align: center; /* Center text */
+}
+
+.iconContainer {
+  position: relative;
+  display: flex;
+}
+
+.editedDot {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 8px;
+  height: 8px;
+  background-color: #667eea;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.navIcon {
+  width: 1.4rem;
+  height: 1.4rem;
+  color: #718096;
+  flex-shrink: 0;
+}
+
+.navText {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center text within navText */
+}
+
+.navLabel {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #2d3748;
+}

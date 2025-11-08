@@ -1,175 +1,171 @@
-import { useState, useEffect } from "react";
-import Sidebar from "../../components/sidebar";
-import PreviewPanel from "../../components/preview-panel";
-import ConfigPanel from "../../components/config-panel";
+import { useEffect, useState } from "react";
+
+import { Button } from "antd";
+import { Download, RotateCcw, Upload } from "lucide-react";
+
+import logo from "@assets/logo.png";
+import {
+  ConfigPanel,
+  ImagesList,
+  PreviewPanel,
+  Sidebar,
+} from "@common/components";
+import useStore from "@common/store/use-store";
+import { formatFileSize } from "@common/utils/formatters";
+
 import styles from "./style.module.css";
 
-export default function Studio({
-  onNavigateToHome,
-  images,
-  activeImageIndex,
-  setActiveImageIndex,
-  // All image editing state and functions passed from parent
-  cropArea,
-  setCropArea,
-  showGrid,
-  setShowGrid,
-  cropInputMode,
-  setCropInputMode,
-  simplifyRatio,
-  applyCrop,
-  hasSettingsChanged,
-  revertCrop,
-  cropContainerRef,
-  commonAspectRatios,
-  isDownloading,
-  rotation,
-  setRotation,
-  debouncedSetRotation,
-  applyAllChanges,
-  downloadImage,
-  revertRotation,
-  openFullscreen,
-  faviconSizes,
-  selectedFaviconSizes,
-  setSelectedFaviconSizes,
-  customFaviconSize,
-  setCustomFaviconSize,
-  generateFavicons,
-  cornerRadius,
-  setCornerRadius,
-  uniformRadius,
-  setUniformRadius,
-  applyBorderRadius,
-  revertBorderRadius,
-  backgroundColor,
-  setBackgroundColor,
-  removeBackground,
-  setRemoveBackground,
-  changeBackground,
-  revertBackground,
-  compressionQuality,
-  setCompressionQuality,
-  debouncedSetCompressionQuality,
-  formatFileSize,
-  reduceFileSize,
-  revertCompression,
-  selectedFormat,
-  setSelectedFormat,
-  imageFormats,
-  convertFormat,
-  revertFormat,
-  copyToClipboard,
-  copied,
-  processedImageSrc,
-  compressedImageSrc,
-  compressedSize,
-  compressionRatio,
-  transparentImageSrc, // New prop
-  setTransparentImageSrc, // New prop
-}) {
-  const [activeTool, setActiveTool] = useState("analysis");
+export default function Studio() {
+  const [activeTool, setActiveTool] = useState(null);
+  const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
+  const [selectedIndices, setSelectedIndices] = useState([]);
+  const [editedTools, setEditedTools] = useState([]);
+
+  const store = useStore();
+  const {
+    images,
+    activeImageIndex,
+    setActiveImageIndex,
+    navigateToHome,
+    exportAll,
+    revertAll,
+    isDownloading,
+    hasSettingsChanged,
+    compressedImageSrc,
+    compressionQuality,
+    compressedSize,
+    compressionRatio,
+    faviconSizes,
+    cropArea,
+    setCropArea,
+    showGrid,
+    applyAllChanges,
+  } = store;
 
   const imageData = images[activeImageIndex] || null;
 
-  // If no images, redirect to home
   useEffect(() => {
     if (images.length === 0) {
-      onNavigateToHome();
+      navigateToHome();
     }
-  }, [images.length, onNavigateToHome]);
+  }, [images.length, navigateToHome]);
+
+  useEffect(() => {
+    if (hasSettingsChanged) {
+      const changes = hasSettingsChanged();
+      const edited = Object.keys(changes).filter((key) => changes[key]);
+      setEditedTools(edited);
+    }
+  }, [hasSettingsChanged, images, activeImageIndex]);
+
+  const handleToolChange = (tool) => {
+    if (activeTool === tool) {
+      setIsConfigPanelOpen(!isConfigPanelOpen);
+    } else {
+      setActiveTool(tool);
+      setIsConfigPanelOpen(true);
+    }
+  };
 
   const handleImageChange = (newIndex) => {
     setActiveImageIndex(newIndex);
+    setSelectedIndices([newIndex]);
+  };
+
+  const handleSelectAll = () => {
+    if (selectedIndices.length === images.length) {
+      setSelectedIndices([]);
+    } else {
+      setSelectedIndices(images.map((_, i) => i));
+    }
+  };
+
+  const handleImageSelect = (index) => {
+    if (selectedIndices.includes(index)) {
+      setSelectedIndices(selectedIndices.filter((i) => i !== index));
+    } else {
+      setSelectedIndices([...selectedIndices, index]);
+    }
   };
 
   return (
-    <div className={styles.studioContainer}>
-      <Sidebar
-        activeTool={activeTool}
-        onToolChange={setActiveTool}
-        onNavigateToHome={onNavigateToHome}
-      />
-      <PreviewPanel
-        imageData={imageData}
-        processedImageSrc={processedImageSrc}
-        compressedImageSrc={compressedImageSrc}
-        images={images}
-        activeImageIndex={activeImageIndex}
-        onImageChange={handleImageChange}
-        formatFileSize={formatFileSize}
-        activeTool={activeTool}
-        compressionQuality={compressionQuality}
-        compressedSize={compressedSize}
-        compressionRatio={compressionRatio}
-        faviconSizes={[16, 32, 48, 64, 128, 256]}
-        copyToClipboard={copyToClipboard}
-        copied={copied}
-        cropArea={cropArea}
-        setCropArea={setCropArea}
-        showGrid={showGrid}
-        cropContainerRef={cropContainerRef}
-        hasSettingsChanged={hasSettingsChanged}
-        revertCrop={revertCrop}
-      />
-      <ConfigPanel
-        activeTool={activeTool}
-        imageData={imageData}
-        processedImageSrc={processedImageSrc}
-        cropArea={cropArea}
-        setCropArea={setCropArea}
-        showGrid={showGrid}
-        setShowGrid={setShowGrid}
-        cropInputMode={cropInputMode}
-        setCropInputMode={setCropInputMode}
-        simplifyRatio={simplifyRatio}
-        applyCrop={applyCrop}
-        hasSettingsChanged={hasSettingsChanged}
-        revertCrop={revertCrop}
-        cropContainerRef={cropContainerRef}
-        commonAspectRatios={commonAspectRatios}
-        isDownloading={isDownloading}
-        rotation={rotation}
-        setRotation={setRotation}
-        debouncedSetRotation={debouncedSetRotation}
-        applyAllChanges={applyAllChanges}
-        downloadImage={downloadImage}
-        revertRotation={revertRotation}
-        openFullscreen={openFullscreen}
-        faviconSizes={faviconSizes}
-        selectedFaviconSizes={selectedFaviconSizes}
-        setSelectedFaviconSizes={setSelectedFaviconSizes}
-        customFaviconSize={customFaviconSize}
-        setCustomFaviconSize={setCustomFaviconSize}
-        generateFavicons={generateFavicons}
-        cornerRadius={cornerRadius}
-        setCornerRadius={setCornerRadius}
-        uniformRadius={uniformRadius}
-        setUniformRadius={setUniformRadius}
-        applyBorderRadius={applyBorderRadius}
-        revertBorderRadius={revertBorderRadius}
-        backgroundColor={backgroundColor}
-        setBackgroundColor={setBackgroundColor}
-        removeBackground={removeBackground}
-        setRemoveBackground={setRemoveBackground}
-        changeBackground={changeBackground}
-        revertBackground={revertBackground}
-        compressionQuality={compressionQuality}
-        setCompressionQuality={setCompressionQuality}
-        debouncedSetCompressionQuality={debouncedSetCompressionQuality}
-        formatFileSize={formatFileSize}
-        reduceFileSize={reduceFileSize}
-        revertCompression={revertCompression}
-        selectedFormat={selectedFormat}
-        setSelectedFormat={setSelectedFormat}
-        imageFormats={imageFormats}
-        convertFormat={convertFormat}
-        revertFormat={revertFormat}
-        copyToClipboard={copyToClipboard}
-        copied={copied}
-        transparentImageSrc={transparentImageSrc} // Pass transparentImageSrc
-        setTransparentImageSrc={setTransparentImageSrc} // Pass setTransparentImageSrc
-      />
+    <div className={styles.studioLayout}>
+      <header className={styles.header}>
+        <div className={styles.brand}>
+          <img src={logo} alt="Logo" className={styles.logo} />
+          <h1 className={styles.title}>Pic Studio</h1>
+        </div>
+        <div className={styles.headerCenter}>
+          <Button
+            type="primary"
+            icon={<Upload size={16} />}
+            onClick={navigateToHome}
+          >
+            Import
+          </Button>
+        </div>
+        <div className={styles.headerActions}>
+          <Button
+            icon={<RotateCcw size={16} />}
+            onClick={() => {
+              revertAll();
+              setEditedTools([]);
+            }}
+            disabled={isDownloading}
+          >
+            Revert All Changes
+          </Button>
+          <Button
+            type="primary"
+            icon={<Download size={16} />}
+            onClick={exportAll}
+            disabled={isDownloading}
+          >
+            Export All
+          </Button>
+        </div>
+      </header>
+      <div className={styles.mainContent}>
+        <div className={styles.leftPanel}>
+          <Sidebar
+            activeTool={activeTool}
+            onToolChange={handleToolChange}
+            editedTools={editedTools}
+          />
+          {isConfigPanelOpen && (
+            <ConfigPanel
+              activeTool={activeTool}
+              selectedIndices={selectedIndices}
+            />
+          )}
+        </div>
+        <div className={styles.previewPanel}>
+          <PreviewPanel
+            imageData={imageData}
+            compressedImageSrc={compressedImageSrc}
+            formatFileSize={formatFileSize}
+            activeTool={activeTool}
+            compressionQuality={compressionQuality}
+            compressedSize={compressedSize}
+            compressionRatio={compressionRatio}
+            faviconSizes={faviconSizes}
+            cropArea={cropArea}
+            setCropArea={setCropArea}
+            showGrid={showGrid}
+            applyAllChanges={applyAllChanges}
+          />
+        </div>
+        <div className={styles.rightPanel}>
+          <ImagesList
+            images={images}
+            activeImageIndex={activeImageIndex}
+            onImageChange={handleImageChange}
+            onSelectAll={handleSelectAll}
+            selectedIndices={selectedIndices}
+            onImageSelect={handleImageSelect}
+          />
+        </div>
+      </div>
     </div>
   );
 }

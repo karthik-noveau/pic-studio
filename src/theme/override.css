@@ -2,6 +2,10 @@
   /* Removed max-width, margin, padding, and text-align to allow full width for Studio component */
 }
 
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;

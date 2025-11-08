@@ -1,135 +1,165 @@
-# 🏗️ Project Architecture & Code Standards
+# 🏗️ **Project Architecture & Code Standards**
 
-This document defines the **project structure, naming conventions, styling rules, and linting setup** to ensure consistent, scalable, and maintainable React codebases.
+For **any** AI-generated output involving code, architecture, documentation, refactoring, optimization, or file creation:
+
+- ✅ Follow **every rule** in this document exactly.
+- ✅ Follow naming, structure, examples, and conventions **without modification**.
+- ✅ When something is unclear, **AI must ask the user** before generating code.
+- ❌ No assumptions, creativity, renaming, reorganizing, or restructuring.
+- ❌ No unapproved folders like `lib`, `shared`, `helpers`, `ui`, etc.
+- ✅ Use Zustand store when state persistence across components is required.
 
 ---
 
-## 📂 1. Folder Structure Standards
+# ✅ 1. Folder Structure (Strict Standard)
 
 ```
 src/
   assets/
     ├── logo/
+    ├── icons/
     ├── page-name/
 
-  components/                → Reusable UI components shared across the app
-
-  common/                    → Shared logic and utilities
+  common/
+    ├── components/
     ├── utils/
-    │   ├── background.removal.js  
-    │   └── index.js         // Export all utils here
+    │     ├── background.removal.js
+    │     ├── drag.js
+    │     └── index.js
     ├── constants/
-    │   └── index.js         // Export all constants here
+    │     └── index.js
     └── hooks/
-        ├── processed.image.js  
-        └── index.js         // Export all hooks here
+          ├── processed.image.js
+          └── index.js
 
-  pages/                     → Page-level or feature-specific modules
+  pages/
     page-name/
       ├── index.jsx
+      ├── slider/
+      │     └── index.js
       ├── style.module.css
       ├── utils.js
       └── constants.js
 
-  theme/                     → Global styling assets
-    ├── override.css         // Base resets (e.g., body { margin: 0; })
-    ├── colors.css           // Custom color variables (--black-color, etc.)
-    ├── font.css             // Font sizing variables (--font-size-6, etc.)
-
-App.jsx
-main.js
-README.md
+  theme/
+    ├── override.css
+    ├── colors.css
+    └── font.css
 ```
 
-### Notes
+### ✅ Mandatory Notes
 
-* ✅ Every **component** or **page** must include its own `style.module.css` file.
-* 🧩 Keep each folder **focused**, **self-contained**, and **purpose-driven**.
-
----
-
-## 🧩 2. General Rules
-
-### 📁 Feature-Based Grouping
-
-* Each **page** or **feature** should contain its logic, styles, and helpers within its folder.
-* The structure should be self-explanatory — opening a folder should clearly indicate its purpose.
-
-### ♻️ Shared Logic
-
-* Shared logic → `/common/hooks` or `/common/utils`
-* Shared constants → `/common/constants`
-* Always **import shared utilities** — never copy-paste between modules.
-
-### 🧱 Reusable Components
-
-* Components reused across multiple areas belong in `/components/`.
-* Build complex interfaces by composing **small, modular, and testable** components.
-
-### 🧠 Code Clarity
-
-* Keep components **small, focused, and readable**.
-* One file = one responsibility.
-* Favor **clarity over cleverness** — code should be understandable at first glance.
+- Every page needs a **style.module.css**.
+- Page-specific utilities must remain inside their own folders.
+- Shared logic lives **only** inside `/common/`.
+- Large JSX must be split using `slider/` or additional subcomponents.
+- Use central `index.js` files for clean imports.
 
 ---
 
-## ✨ 3. Naming Conventions
+# ✅ 2. Shared Logic Rules
 
-| Entity Type               | Format                      | Example                              |
-| ------------------------- | --------------------------- | ------------------------------------ |
-| Folders                   | kebab-case                  | `image-crop/`, `file-uploader/`      |
-| Component Files           | `index.jsx`                 | `src/components/tabs/crop/index.jsx` |
-| Style Files               | `style.module.css`          | `src/pages/home/style.module.css`    |
-| Utility / Constant Files  | lowercase                   | `utils.js`, `constants.js`           |
-| Component Names (in code) | PascalCase                  | `export function ImageCrop()`        |
-| Hook Names                | camelCase with “use” prefix | `useImagePreview.js`                 |
-| CSS Class Names           | camelCase                   | `.imageContainer`, `.actionButton`   |
+| Use Case               | Location              |
+| ---------------------- | --------------------- |
+| Reusable UI components | `/common/components/` |
+| Shared utilities       | `/common/utils/`      |
+| Shared constants       | `/common/constants/`  |
+| Shared hooks           | `/common/hooks/`      |
+
+- ❌ No duplicating logic across pages.
+- ✅ Always export everything through the **index.js** of each folder.
 
 ---
 
-## 🎨 4. Styling Conventions
+# ✅ 3. Naming Conventions
 
-* ✅ Use **CSS Modules** (`style.module.css`) for scoped styling.
-* ✅ Keep **global styles** (colors, fonts, base resets) in `/theme/`.
-* ❌ No inline styles.
-* ❌ No Tailwind CSS.
+| Item               | Rule                   | Example                       |
+| ------------------ | ---------------------- | ----------------------------- |
+| Folders            | kebab-case             | `image-crop/`                 |
+| Page component     | index.jsx              | `pages/home/index.jsx`        |
+| Subcomponents      | dot.notation           | `slider.card.jsx`     |
+| Styles             | style.module.css       | `pages/home/style.module.css` |
+| Utils/Constants    | lowercase              | `utils.js`                    |
+| Advanced utils     | dot.notation           | `upload.handler.js`           |
+| React Components   | PascalCase             | `ImagePreview`                |
+| Hooks              | camelCase + use prefix | `useProcessedImage()`         |
+| CSS Module classes | camelCase              | `.imageContainer`             |
 
-**Example:**
+---
+
+# ✅ 4. Styling Rules
+
+- ✅ Use CSS Modules only.
+- ✅ `/theme` defines colors, fonts, and resets.
+- ❌ No inline styles.
+- ❌ No Tailwind, SCSS, Styled Components, Emotion.
+
+**CSS Example:**
 
 ```css
-/* style.module.css */
-.container {
+container {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
 }
 
-.imagePreview {
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.actionButton {
+buttonPrimary {
   margin-top: 12px;
 }
 ```
 
 ---
 
-## 🧠 8. Universal AI Code Generation Prompt
+# ✅ 5. AI Behavior Rules
 
-### **AI Code Generation Standards**
+## 🔒 5.1 Code Generation Requirements
 
-When generating React code for this project, **always** follow these rules:
+AI must:
 
-1. Follow the **exact folder structure** shown above.
-2. ❌ Do **not** create or use `src/App.css` or `src/index.css`.
-3. ✅ Use `/theme/` for all global styling and `style.module.css` for component-level styles.
-4. Export each component as a **named** PascalCase function — e.g., `export function ImageCrop()`.
-5. Use **only CSS Modules** — no inline or Tailwind styles.
-6. Keep files **single-purpose**. Split complex logic into smaller components or hooks.
-7. Place reusable logic in `/common/hooks` or `/common/utils`, and always update `index.js` exports.
-8. Follow all **naming**, **structure**, and **styling** rules defined in this document.
+- ✅ Mirror the folder structure **exactly**.
+- ✅ Generate all mandatory files:
 
- 
+  - `index.jsx`
+  - `style.module.css`
+
+- ✅ Use modular structure; split large JSX.
+- ✅ Import everything through central `index.js` files.
+- ❌ Never introduce new folder names.
+- ❌ Never merge unrelated logic.
+
+---
+
+## 📏 5.2 Formatting Rules
+
+Order of imports:
+
+1. React
+2. External libraries
+3. Internal modules (common, pages)
+4. CSS modules
+
+Max file size: **~200 lines**.
+
+---
+
+## 🧩 5.3 Error Prevention
+
+- ❌ Never hallucinate component names or logic.
+- ❌ Never add new concepts without user approval.
+- ✅ If ANY detail is missing or ambiguous → **ask the user**.
+
+---
+
+## ✅ 5.4 AI Self-Check
+
+AI must verify:
+
+1. Folder structure follows spec
+2. File names match exact rules
+3. Page has a `style.module.css`
+4. No Tailwind or inline styles
+5. Imports follow global index exports
+6. No unknown folders
+7. React components use PascalCase
+8. Hooks follow use-prefix naming
+9. Zustand used only when needed

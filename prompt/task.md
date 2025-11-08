@@ -1,127 +1,194 @@
-## 🧭 **Prompt — “Pic Studio (Pro Image Editing SaaS Product)”**
+# 🧭 **Pic Studio — Pro Image Editing SaaS Product**
 
-**Goal:**
-Design a **professional-grade image editing interface** for **Pic Studio by Skynoveau Technology** — a modern, minimal, and high-performance web-based photo editor.
-The experience should feel **clean, responsive, and pro-level**, comparable to **Pixlr**, while maintaining **Pic Studio’s unique design language and UX logic**.
+### **UI & Interaction Specification (Refined)**
 
----
-
-## 🏠 **Home Page**
-
-- **Purpose:** Entry point for users to upload or import images.
-- **UI Elements:**
-  - Header with **Pic Studio logo and brand name**.
-  - Central **upload card** with minimal styling.
-  - Support for:
-    - Local file upload.
-    - URL-based upload.
-    - Paste from clipboard.
-    - Drag & drop upload.
-
-  - On successful upload → enable **“Go to Studio”** button to navigate to the editing workspace.
+A professional-grade, high-performance photo editing workspace for **Pic Studio by Skynoveau Technology**.
+Built with **Ant Design core components only** (Button, Upload, Tabs, Slider, Checkbox, Select, Input, Dragger, etc.).
+Avoid decorative AntD components like Typography or Card.
 
 ---
 
-## 🎨 **Studio Page**
+# 🏠 1. **Home Page**
 
-### 🧩 **Header Bar**
+### ✅ Purpose
 
-| Section   | Content                                                                                                            |
-| :-------- | :----------------------------------------------------------------------------------------------------------------- |
-| **Left**  | Pic Studio logo (clickable to return to home).                                                                     |
-| **Right** | • **Export** → Exports selected images.<br>• **Revert All Changes** → Restores all images to their original state. |
+A clean, distraction-free starting point for image onboarding before entering the Studio.
 
----
+### ✅ UI Layout
 
-## 🧱 **Main Layout – Four-Column Responsive Grid**
+#### **Header**
 
-| Column          | Purpose              | Description                                         |
-| :-------------- | :------------------- | :-------------------------------------------------- |
-| **1️⃣**          | **Navigation Menus** | List of editing and analysis tools.                 |
-| **1️⃣ (nested)** | **Config Panel**     | Displays dynamic tool configuration options.        |
-| **2️⃣**          | **Preview Panel**    | Central live image preview with editing tools.      |
-| **3️⃣**          | **Images List**      | Thumbnail grid with selection and state management. |
+- Left: Pic Studio logo + brand text
+- Right: Empty
 
----
+#### **Central Upload Panel**
 
-### 1️⃣ **Left Column 1 — Navigation Menus**
+All input methods must be visible and minimal:
 
-Two-column structure:
-**Menu List** (primary column) and **Config Panel** (secondary column).
+- Click-to-upload (**Upload**)
+- Drag-and-drop (**Upload.Dragger**)
+- URL import input + button
+- Paste-from-clipboard support
 
-- When a menu item is clicked:
-  - Its corresponding **Config Panel** opens automatically.
-  - The panel is **collapsible** to maximize preview space.
+#### **After Upload**
 
-**Menu Items:**
-
-| Tool              | Description                                                                                                                                                                              | Preview Behavior                                |
-| :---------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------- |
-| 📊 **Analysis**   | Displays image stats (dimensions, size, color distribution, metadata).                                                                                                                   | Shows **original image** only.                  |
-| ✂️ **Crop**       | Offers aspect ratio presets, freeform crop, and dual-slider crop. Default crop fits full image dimensions.                                                                               | Shows **crop handles** on selected images.      |
-| 🔄 **Rotate**     | Provides presets (90°, 180°, flip H/V) and custom rotation via slider.                                                                                                                   | Shows **rotation tool** for selected images.    |
-| ⬛ **Border**     | Allows border presets (25%, 50%, 75%) and custom radius/width via sliders.                                                                                                               | Shows **border adjustment** on selected images. |
-| 🎨 **Background** | Controls fill color, gradient, and background transparency removal. When transparency is removed → show “Transparent Only” toggle. If enabled → reveal color picker for background fill. | Shows **background tool** for selected images.  |
-| 🗜 **Compress**   | Modes: **Smart (default)** or **Custom**. Custom mode provides preset % compression or manual slider for fine-tuning.                                                                    | Shows **compression tool** for selected images. |
-| 🔁 **Convert**    | Converts images between formats: PNG, JPG, WEBP. Displays **latest processed image** before conversion, or converted version if already processed.                                       | Shows **conversion result preview**.            |
-| 🧩 **Favicon**    | Generates favicons in standard resolutions. Disabled if multiple images are selected.                                                                                                    | Active only for **single-image mode**.          |
+- Show a large **“Go to Studio”** Button
+- Multi-file uploads can auto-navigate to Studio
 
 ---
 
-### 1️⃣ **Left Column 2 — Config Panel**
+# 🎨 2. **Studio Page**
 
-- Displays context-specific settings for the selected tool.
-- Auto-opens upon selection.
-- Collapsible toggle to expand preview area.
-- All parameter changes apply **live** in the **Preview Panel**.
-- Remains persistent across tab switches and image selections.
+A four-column professional editing interface with global state, per-tool configuration, and real-time preview.
 
----
+### ✅ Header Bar
 
-### 2️⃣ **Preview Column — Live Preview Panel**
-
-- Displays the **currently active image**.
-- All transformations (crop, rotate, border, background, etc.) apply **live in real time** across all tools (except Analysis).
-- Supports:
-  - Zoom and pan gestures.
-  - Reset to original view.
-  - Adaptive scaling to available space.
-  - Multi-image editing flow: processes one image at a time but remembers all edits.
-
-- Fully synced with right-column image states.
+| Position   | Content                                                                                                     |
+| ---------- | ----------------------------------------------------------------------------------------------------------- |
+| **Left**   | Logo                                                                                                        |
+| **Center** | **Import Images** button (returns to Home)                                                                  |
+| **Right**  | **Export** button<br>• Exports each image individually<br>• No ZIP<br>• Favicon tool handles its own export |
 
 ---
 
-### 3️⃣ **Right Column — Images List**
+# 🧱 3. **Four-Column Main Layout**
 
-- Displays uploaded images as thumbnails with selectable states.
-- Features:
-  - “**Select All**” checkbox in header.
-  - Multi-image batch editing support.
-  - Deselection retains unsaved changes; reselecting restores prior edit state.
-  - Visual state indicators:
-    - Active image (highlighted)
-    - Edited (badge or icon)
-    - Unedited (default)
+| Column                | Role              | Notes                        |
+| --------------------- | ----------------- | ---------------------------- |
+| **1. Left Menu**      | Tools list        | Click to toggle config panel |
+| **1A. Nested Panel**  | Tool Config Panel | Dynamic per-tool settings    |
+| **2. Center Preview** | Main workspace    | Zoom, pan, edits preview     |
+| **3. Right Panel**    | Images List       | Selection + active image     |
 
----
-
-## ⚙️ **Functional Requirements**
-
-- **Real-time sync:** All edits reflect instantly in the Preview Panel.
-- **Undo/Redo:** Works across all editing tools and configurations.
-- **Persistent state:** No data loss on tab or image switches.
-- **Multi-image workflow:** Optimized for performance with several images open simultaneously.
-- **Responsive layout:** Adaptive grid and controls for all screen sizes.
-- **Autosave (optional):** Retain session edits until export or manual reset.
+Desktop layout should stay consistent; responsive adjustments only when needed.
 
 ---
 
-## 🎯 **Design Reference**
+# 🔧 4. **Tools Menu (Left Column)**
 
-- **Visual Inspiration:** [Pixlr Express](https://pixlr.com/express)
-- **Style Direction:** Flat, minimal, modular grid design.
-- **Typography:** Modern sans-serif (e.g., Inter / Manrope).
-- **Color Palette:** Neutral base with brand accent highlights.
-- **Interaction Tone:** Snappy, fluid animations and transitions.
-- **Overall Feel:** Pro-level SaaS studio — minimal UI, maximum clarity.
+### ✅ Interaction Rules
+
+- Clicking a tool expands its config panel
+- Clicking again collapses it
+- Panel state persists when switching images
+- Multi-select behavior depends on tool
+- Show a small dot when tool changes are applied
+
+### ✅ Tools Overview
+
+| Tool           | Description                                                                                                            | Preview Interaction    |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| **Analysis**   | Metadata, dimensions, color values, size. Tabs: Original, Modified, Layout Settings (single column, auto, two-column). | Read-only panel        |
+| **Crop**       | Aspect ratios, presets, freeform, sliders. Default covers full image.                                                  | Crop handles           |
+| **Rotate**     | 90/180 presets, Flip H/V, custom slider.                                                                               | Rotation overlay       |
+| **Border**     | Thickness presets, custom width, radius sliders.                                                                       | Border outline         |
+| **Background** | Color fill, gradient, remove background, transparency toggle. Transparent auto-uses PNG.                               | Background overlay     |
+| **Compress**   | Smart (default) + Custom. Indicator if uncompressed. Right panel shows comparison.                                     | Compression comparison |
+| **Convert**    | JPG, PNG, WEBP. Always uses latest state.                                                                              | Conversion preview     |
+| **Favicon**    | Generates multiple icon resolutions. Disabled for multi-select. Has dedicated export.                                  | Tool-specific          |
+
+---
+
+# ⚙️ 5. **Tool Config Panel**
+
+### ✅ Behavior
+
+- analysis tool config panel opened defaultly 
+- Header shows tool name, description, and **Reset** (resets only that tool)
+
+### ✅ Multi-Select Handling
+
+Visible only when more than one image is selected.
+
+Tabs:
+
+1. **Current Image Settings**
+2. **Bulk Settings**
+
+**Bulk Settings Rules:**
+
+- Applies settings to all selected images
+- Switching to “Current” shows inherited values as read-only
+- Individual overrides require switching to single-select
+- Unselected images retain their own states
+
+### ✅ Favicon Exception
+
+- Has its own **Export** button
+- Skips global export rules
+
+---
+
+# 🖼️ 6. **Preview Panel (Center Column)**
+
+Primary interactive workspace with real-time editing.
+
+### ✅ Features
+
+- Real-time preview for all tools
+- Interactive crop and rotate handles
+- Zoom, pan, fit-to-screen
+- **Undo / Redo** (global stack)
+- **Revert All**
+
+  - Single image → reset that image
+  - Multi-select → reset selected images
+
+- Always synced with:
+
+  - Tool settings
+  - Image selection
+  - Global state
+
+---
+
+# 🗂️ 7. **Images List (Right Column)**
+
+### ✅ Layout
+
+- Fixed width: **150px**
+- Single-column scrollable list
+
+### ✅ Features
+
+- **Select All** checkbox in header
+
+  - Auto-updates when user manually toggles items
+
+- Thumbnails show:
+
+  - Active-state highlight
+  - Checkbox (always visible, stronger on hover)
+  - Edited badge/icon
+  - Unedited state
+
+- Deselecting doesn’t remove edits
+- Reselecting restores retained state instantly
+
+---
+
+# ⚙️ 8. **Global Functional Requirements**
+
+### ✅ Core System Behavior
+
+- Real-time sync across all panels with preview panel
+- Each panel changes should apply on last processed Image
+- Global undo/redo
+- Every tool maintains its own internal state history
+- State persists when:
+
+  - Changing tools
+  - Switching images
+  - Switching between bulk and individual mode
+
+- Optimized for:
+
+  - Multi-image editing
+  - High-resolution images
+
+- Responsive adjustments without breaking four-column logic
+- Optional local autosave until:
+
+  - Export
+  - Clear workspace
+  - Reset All

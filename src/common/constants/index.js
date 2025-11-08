@@ -1,3 +1,4 @@
+import { commonAspectRatios } from "./aspect-ratios";
 
 // Favicon sizes
 export const faviconSizes = [
@@ -34,3 +35,5 @@ export const imageFormats = [
     supportsTransparency: true,
   },
 ];
+
+export { commonAspectRatios };

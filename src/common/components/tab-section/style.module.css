@@ -1,0 +1,78 @@
+.card {
+  background: white;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.iconWrapper {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cardTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0;
+  color: #2d3748;
+  flex-grow: 1;
+}
+
+.cardHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Icon Color Classes */
+.blueIcon {
+  background-color: #dbeafe; /* blue-100 */
+}
+
+.greenIcon {
+  background-color: #d1fae5; /* green-100 */
+}
+
+.pinkIcon {
+  background-color: #fce7f3; /* pink-100 */
+}
+
+.orangeIcon {
+  background-color: #fff7ed; /* orange-100 */
+}
+
+.purpleIcon {
+  background-color: #ede9fe; /* purple-100 */
+}
+
+.redIcon {
+  background-color: #fee2e2; /* red-100 */
+}
+
+.cyanIcon {
+  background-color: #e0f7fa; /* cyan-100 */
+}
+
+.yellowIcon {
+  background-color: #fffde7; /* yellow-100 */
+}
+
+.grayIcon {
+  background-color: #f3f4f6; /* gray-100 */
+}

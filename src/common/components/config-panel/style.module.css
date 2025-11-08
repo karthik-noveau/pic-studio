@@ -1,0 +1,179 @@
+.configPanel {
+  width: 380px;
+  background: white;
+  border-left: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.configHeader {
+  padding: 1rem;
+  background: #f7fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.headerContent {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.headerIcon {
+  width: 2rem;
+  height: 2rem;
+  color: #667eea;
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+
+.headerText {
+  flex: 1;
+}
+
+.configTitle {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 3px;
+  color: #2d3748;
+}
+
+.configDesc {
+  font-size: 0.875rem;
+  color: #718096;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.divider {
+  margin: 0;
+}
+
+.configContent {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.tabs {
+  background-color: #f7fafc;
+}
+
+/* Empty State */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  padding: 3rem 2rem;
+  color: #a0aec0;
+}
+
+.emptyIcon {
+  width: 4rem;
+  height: 4rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.5;
+}
+
+.emptyTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  color: #718096;
+}
+
+.emptyDesc {
+  font-size: 0.95rem;
+  margin: 0;
+  color: #a0aec0;
+  max-width: 280px;
+}
+
+/* Scrollbar styling */
+.configPanel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.configPanel::-webkit-scrollbar-track {
+  background: #f7fafc;
+}
+
+.configPanel::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 4px;
+}
+
+.configPanel::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
+
+.configContent::-webkit-scrollbar {
+  width: 6px;
+}
+
+.configContent::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.configContent::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 3px;
+}
+
+.configContent::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .configPanel {
+    width: 320px;
+  }
+
+  .configHeader {
+    padding: 1.25rem;
+  }
+
+  .configContent {
+    padding: 1.25rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .configPanel {
+    width: 100%;
+    height: auto;
+    max-height: 50vh;
+    border-left: none;
+    border-top: 1px solid #e2e8f0;
+  }
+
+  .configHeader {
+    padding: 1rem;
+  }
+
+  .headerContent {
+    gap: 0.75rem;
+  }
+
+  .headerIcon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .configTitle {
+    font-size: 1.1rem;
+  }
+
+  .configDesc {
+    font-size: 0.8rem;
+  }
+
+  .configContent {
+    padding: 1rem;
+  }
+}

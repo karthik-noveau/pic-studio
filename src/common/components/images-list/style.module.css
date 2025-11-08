@@ -1,0 +1,65 @@
+.imagesListContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.header span {
+  margin-left: 10px;
+}
+
+.thumbnailGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.thumbnail {
+  position: relative;
+  cursor: pointer;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  width: 100%;
+  height: 100px;
+}
+
+.thumbnail.active {
+  border-color: #1890ff;
+}
+
+.thumbnail.selected {
+  border-color: #1890ff;
+  background-color: #e6f7ff;
+}
+
+.thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.checkbox {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  z-index: 1;
+}
+
+.editIcon {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  padding: 2px;
+}

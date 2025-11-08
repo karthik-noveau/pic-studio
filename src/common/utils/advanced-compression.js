@@ -61,17 +61,17 @@ export function analyzeImageComplexity(canvas, ctx) {
   const avgColorVariance = colorVariance / (samples * 3);
 
   // Determine complexity level
-  let complexity = 'low';
+  let complexity = "low";
   let recommendedQuality = 70;
 
   if (avgVariance > 40 || edgePercentage > 25) {
-    complexity = 'high';
+    complexity = "high";
     recommendedQuality = 85; // High detail needs better quality
   } else if (avgVariance > 20 || edgePercentage > 15) {
-    complexity = 'medium';
+    complexity = "medium";
     recommendedQuality = 75;
   } else {
-    complexity = 'low';
+    complexity = "low";
     recommendedQuality = 65; // Simple images can use lower quality
   }
 
@@ -89,37 +89,42 @@ export function analyzeImageComplexity(canvas, ctx) {
 /**
  * Compress image to multiple formats and compare
  */
-export async function compressToMultipleFormats(canvas, quality = 80, hasTransparency = false) {
+export async function compressToMultipleFormats(
+  canvas,
+  quality = 80,
+  hasTransparency = false
+) {
   const results = [];
 
   // If image has transparency, only use PNG and WebP
   if (hasTransparency) {
     // WebP with transparency
     try {
-      const webpData = canvas.toDataURL('image/webp', quality / 100);
+      const webpData = canvas.toDataURL("image/webp", quality / 100);
       results.push({
-        format: 'webp',
+        format: "webp",
         dataUrl: webpData,
         size: Math.round((webpData.length * 3) / 4),
         quality,
       });
+    // eslint-disable-next-line no-unused-vars
     } catch (e) {
-      console.warn('WebP not supported');
+      console.warn("WebP not supported");
     }
 
     // PNG (lossless, but larger)
-    const pngData = canvas.toDataURL('image/png');
+    const pngData = canvas.toDataURL("image/png");
     results.push({
-      format: 'png',
+      format: "png",
       dataUrl: pngData,
       size: Math.round((pngData.length * 3) / 4),
       quality: 100,
     });
   } else {
     // JPEG
-    const jpegData = canvas.toDataURL('image/jpeg', quality / 100);
+    const jpegData = canvas.toDataURL("image/jpeg", quality / 100);
     results.push({
-      format: 'jpeg',
+      format: "jpeg",
       dataUrl: jpegData,
       size: Math.round((jpegData.length * 3) / 4),
       quality,
@@ -127,15 +132,16 @@ export async function compressToMultipleFormats(canvas, quality = 80, hasTranspa
 
     // WebP
     try {
-      const webpData = canvas.toDataURL('image/webp', quality / 100);
+      const webpData = canvas.toDataURL("image/webp", quality / 100);
       results.push({
-        format: 'webp',
+        format: "webp",
         dataUrl: webpData,
         size: Math.round((webpData.length * 3) / 4),
         quality,
       });
+      // eslint-disable-next-line no-unused-vars
     } catch (e) {
-      console.warn('WebP not supported');
+      console.warn("WebP not supported");
     }
   }
 
@@ -146,60 +152,15 @@ export async function compressToMultipleFormats(canvas, quality = 80, hasTranspa
 }
 
 /**
- * Find optimal quality using binary search
- * Tries to achieve target size while maintaining acceptable quality
- */
-export async function findOptimalQuality(
-  canvas,
-  targetSizeReduction = 70, // Target 70% size reduction
-  minQuality = 40,
-  maxQuality = 95
-) {
-  const results = [];
-  let low = minQuality;
-  let high = maxQuality;
-  let bestResult = null;
-
-  // Binary search for optimal quality
-  while (low <= high) {
-    const mid = Math.floor((low + high) / 2);
-
-    // Try WebP first (best compression)
-    let dataUrl;
-    let format = 'webp';
-    try {
-      dataUrl = canvas.toDataURL('image/webp', mid / 100);
-    } catch (e) {
-      // Fallback to JPEG if WebP not supported
-      dataUrl = canvas.toDataURL('image/jpeg', mid / 100);
-      format = 'jpeg';
-    }
-
-    const size = Math.round((dataUrl.length * 3) / 4);
-    const result = { quality: mid, size, dataUrl, format };
-    results.push(result);
-
-    // Update best result
-    if (!bestResult || Math.abs(result.quality - 75) < Math.abs(bestResult.quality - 75)) {
-      bestResult = result;
-    }
-
-    // Adjust search range
-    if (mid < high - 5) {
-      low = mid + 5;
-    } else {
-      break;
-    }
-  }
-
-  return { results, bestResult };
-}
-
-/**
  * Smart compression with perceptual quality preservation
  * Finds the optimal compression that maintains visual quality (92%+ similarity)
  */
-export async function smartCompress(canvas, ctx, originalSize, hasTransparency = false) {
+export async function smartCompress(
+  canvas,
+  ctx,
+  originalSize,
+  hasTransparency = false
+) {
   // 1. Analyze image complexity
   const analysis = analyzeImageComplexity(canvas, ctx);
 
@@ -220,7 +181,10 @@ export async function smartCompress(canvas, ctx, originalSize, hasTransparency =
   // 4. Try AVIF format if supported
   let finalResult = optimalResult;
   try {
-    const avifTest = workingCanvas.toDataURL('image/avif', optimalResult.quality / 100);
+    const avifTest = workingCanvas.toDataURL(
+      "image/avif",
+      optimalResult.quality / 100
+    );
     const avifSize = Math.round((avifTest.length * 3) / 4);
 
     if (avifSize < optimalResult.size * 0.85) {
@@ -228,7 +192,7 @@ export async function smartCompress(canvas, ctx, originalSize, hasTransparency =
       const avifQuality = await calculateQualityScore(canvas, avifTest);
       if (avifQuality >= 92) {
         finalResult = {
-          format: 'avif',
+          format: "avif",
           dataUrl: avifTest,
           size: avifSize,
           quality: optimalResult.quality,
@@ -236,12 +200,14 @@ export async function smartCompress(canvas, ctx, originalSize, hasTransparency =
         };
       }
     }
+  // eslint-disable-next-line no-unused-vars
   } catch (e) {
     // AVIF not supported, continue with original result
   }
 
   // Calculate compression stats
-  const sizeReduction = ((originalSize - finalResult.size) / originalSize) * 100;
+  const sizeReduction =
+    ((originalSize - finalResult.size) / originalSize) * 100;
 
   return {
     ...finalResult,
@@ -267,11 +233,11 @@ async function smartDownsample(canvas, analysis) {
 
   if (maxDimension > 4000) {
     // Very large images
-    targetScale = analysis.complexity === 'high' ? 0.75 : 0.5;
+    targetScale = analysis.complexity === "high" ? 0.75 : 0.5;
   } else if (maxDimension > 3000) {
-    targetScale = analysis.complexity === 'high' ? 0.85 : 0.65;
+    targetScale = analysis.complexity === "high" ? 0.85 : 0.65;
   } else if (maxDimension > 2000) {
-    targetScale = analysis.complexity === 'high' ? 1.0 : 0.8;
+    targetScale = analysis.complexity === "high" ? 1.0 : 0.8;
   }
 
   if (targetScale >= 1.0) {
@@ -281,13 +247,13 @@ async function smartDownsample(canvas, analysis) {
   // Create downsampled canvas
   const newWidth = Math.round(width * targetScale);
   const newHeight = Math.round(height * targetScale);
-  const downsampledCanvas = document.createElement('canvas');
+  const downsampledCanvas = document.createElement("canvas");
   downsampledCanvas.width = newWidth;
   downsampledCanvas.height = newHeight;
 
-  const ctx = downsampledCanvas.getContext('2d');
+  const ctx = downsampledCanvas.getContext("2d");
   ctx.imageSmoothingEnabled = true;
-  ctx.imageSmoothingQuality = 'high';
+  ctx.imageSmoothingQuality = "high";
   ctx.drawImage(canvas, 0, 0, newWidth, newHeight);
 
   return {
@@ -301,15 +267,20 @@ async function smartDownsample(canvas, analysis) {
  * Find optimal quality using perceptual quality testing
  * Target: 92%+ visual similarity with maximum compression
  */
-async function findOptimalQualityWithPerception(originalCanvas, workingCanvas, hasTransparency, analysis) {
+async function findOptimalQualityWithPerception(
+  originalCanvas,
+  workingCanvas,
+  hasTransparency,
+  analysis
+) {
   const minAcceptableQuality = 92; // Minimum perceptual quality (92% similarity)
 
   // Quality search range based on complexity
   let minQuality, maxQuality;
-  if (analysis.complexity === 'high') {
+  if (analysis.complexity === "high") {
     minQuality = 60;
     maxQuality = 90;
-  } else if (analysis.complexity === 'medium') {
+  } else if (analysis.complexity === "medium") {
     minQuality = 45;
     maxQuality = 80;
   } else {
@@ -320,9 +291,9 @@ async function findOptimalQualityWithPerception(originalCanvas, workingCanvas, h
   // Test multiple formats
   const formats = [];
   if (hasTransparency) {
-    formats.push('webp', 'png');
+    formats.push("webp", "png");
   } else {
-    formats.push('webp', 'jpeg');
+    formats.push("webp", "jpeg");
   }
 
   let bestResult = null;
@@ -338,11 +309,17 @@ async function findOptimalQualityWithPerception(originalCanvas, workingCanvas, h
       const quality = Math.floor((low + high) / 2);
 
       try {
-        const dataUrl = workingCanvas.toDataURL(`image/${format}`, quality / 100);
+        const dataUrl = workingCanvas.toDataURL(
+          `image/${format}`,
+          quality / 100
+        );
         const size = Math.round((dataUrl.length * 3) / 4);
 
         // Calculate perceptual quality
-        const perceptualQuality = await calculateQualityScore(originalCanvas, dataUrl);
+        const perceptualQuality = await calculateQualityScore(
+          originalCanvas,
+          dataUrl
+        );
 
         if (perceptualQuality >= minAcceptableQuality) {
           // Quality is good enough, try lower quality for better compression
@@ -358,6 +335,7 @@ async function findOptimalQualityWithPerception(originalCanvas, workingCanvas, h
           // Quality too low, increase quality
           low = quality + 5;
         }
+      // eslint-disable-next-line no-unused-vars
       } catch (e) {
         break; // Format not supported
       }
@@ -373,9 +351,12 @@ async function findOptimalQualityWithPerception(originalCanvas, workingCanvas, h
   // Fallback if no result found
   if (!bestResult) {
     const fallbackQuality = 75;
-    const dataUrl = workingCanvas.toDataURL('image/jpeg', fallbackQuality / 100);
+    const dataUrl = workingCanvas.toDataURL(
+      "image/jpeg",
+      fallbackQuality / 100
+    );
     bestResult = {
-      format: 'jpeg',
+      format: "jpeg",
       dataUrl,
       size: Math.round((dataUrl.length * 3) / 4),
       quality: fallbackQuality,
@@ -390,24 +371,29 @@ async function findOptimalQualityWithPerception(originalCanvas, workingCanvas, h
  * Get human-readable compression recommendation
  */
 function getCompressionRecommendation(analysis, sizeReduction) {
-  let message = '';
+  let message = "";
 
-  if (analysis.complexity === 'high') {
-    message = 'High-detail image: Optimized quality settings to preserve fine details while maximizing compression.';
-  } else if (analysis.complexity === 'medium') {
-    message = 'Medium complexity: Balanced compression applied - optimal quality-to-size ratio achieved.';
+  if (analysis.complexity === "high") {
+    message =
+      "High-detail image: Optimized quality settings to preserve fine details while maximizing compression.";
+  } else if (analysis.complexity === "medium") {
+    message =
+      "Medium complexity: Balanced compression applied - optimal quality-to-size ratio achieved.";
   } else {
-    message = 'Simple image: Aggressive compression applied with no visible quality loss.';
+    message =
+      "Simple image: Aggressive compression applied with no visible quality loss.";
   }
 
   if (sizeReduction > 85) {
-    message += ' 🚀 Exceptional compression - file size reduced by over 85% while maintaining HD quality!';
+    message +=
+      " 🚀 Exceptional compression - file size reduced by over 85% while maintaining HD quality!";
   } else if (sizeReduction > 70) {
-    message += ' ✨ Excellent compression - significant size reduction achieved!';
+    message +=
+      " ✨ Excellent compression - significant size reduction achieved!";
   } else if (sizeReduction > 50) {
-    message += ' ✓ Good compression achieved.';
+    message += " ✓ Good compression achieved.";
   } else {
-    message += ' Compression applied while preserving maximum quality.';
+    message += " Compression applied while preserving maximum quality.";
   }
 
   return message;
@@ -421,16 +407,23 @@ export function calculateQualityScore(originalCanvas, compressedDataUrl) {
   return new Promise((resolve) => {
     const img = new Image();
     img.onload = () => {
-      const canvas = document.createElement('canvas');
+      const canvas = document.createElement("canvas");
       canvas.width = originalCanvas.width;
       canvas.height = originalCanvas.height;
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext("2d");
       ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = 'high';
+      ctx.imageSmoothingQuality = "high";
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-      const originalData = originalCanvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
-      const compressedData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const originalData = originalCanvas
+        .getContext("2d")
+        .getImageData(0, 0, canvas.width, canvas.height);
+      const compressedData = ctx.getImageData(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
 
       // Enhanced perceptual quality calculation
       let luminanceDiff = 0;
@@ -444,8 +437,14 @@ export function calculateQualityScore(originalCanvas, compressedDataUrl) {
           const idx = (y * canvas.width + x) * 4;
 
           // Luminance (perceived brightness)
-          const origLum = 0.299 * originalData.data[idx] + 0.587 * originalData.data[idx + 1] + 0.114 * originalData.data[idx + 2];
-          const compLum = 0.299 * compressedData.data[idx] + 0.587 * compressedData.data[idx + 1] + 0.114 * compressedData.data[idx + 2];
+          const origLum =
+            0.299 * originalData.data[idx] +
+            0.587 * originalData.data[idx + 1] +
+            0.114 * originalData.data[idx + 2];
+          const compLum =
+            0.299 * compressedData.data[idx] +
+            0.587 * compressedData.data[idx + 1] +
+            0.114 * compressedData.data[idx + 2];
           luminanceDiff += Math.abs(origLum - compLum);
 
           // Contrast (local variance)
@@ -453,17 +452,27 @@ export function calculateQualityScore(originalCanvas, compressedDataUrl) {
             const rightIdx = (y * canvas.width + (x + sampleRate)) * 4;
             const downIdx = ((y + sampleRate) * canvas.width + x) * 4;
 
-            const origContrast = Math.abs(originalData.data[idx] - originalData.data[rightIdx]) +
-                                Math.abs(originalData.data[idx] - originalData.data[downIdx]);
-            const compContrast = Math.abs(compressedData.data[idx] - compressedData.data[rightIdx]) +
-                                Math.abs(compressedData.data[idx] - compressedData.data[downIdx]);
+            const origContrast =
+              Math.abs(originalData.data[idx] - originalData.data[rightIdx]) +
+              Math.abs(originalData.data[idx] - originalData.data[downIdx]);
+            const compContrast =
+              Math.abs(
+                compressedData.data[idx] - compressedData.data[rightIdx]
+              ) +
+              Math.abs(compressedData.data[idx] - compressedData.data[downIdx]);
             contrastDiff += Math.abs(origContrast - compContrast);
           }
 
           // Structure (color similarity)
-          const rDiff = Math.abs(originalData.data[idx] - compressedData.data[idx]);
-          const gDiff = Math.abs(originalData.data[idx + 1] - compressedData.data[idx + 1]);
-          const bDiff = Math.abs(originalData.data[idx + 2] - compressedData.data[idx + 2]);
+          const rDiff = Math.abs(
+            originalData.data[idx] - compressedData.data[idx]
+          );
+          const gDiff = Math.abs(
+            originalData.data[idx + 1] - compressedData.data[idx + 1]
+          );
+          const bDiff = Math.abs(
+            originalData.data[idx + 2] - compressedData.data[idx + 2]
+          );
           structureDiff += (rDiff + gDiff + bDiff) / 3;
 
           samples++;
@@ -481,7 +490,8 @@ export function calculateQualityScore(originalCanvas, compressedDataUrl) {
       const structureScore = Math.max(0, 100 - (avgStructureDiff / 255) * 100);
 
       // SSIM-like weighted average (luminance 40%, contrast 30%, structure 30%)
-      const qualityScore = (lumScore * 0.4) + (contrastScore * 0.3) + (structureScore * 0.3);
+      const qualityScore =
+        lumScore * 0.4 + contrastScore * 0.3 + structureScore * 0.3;
 
       resolve(Math.round(qualityScore * 100) / 100); // Round to 2 decimal places
     };
